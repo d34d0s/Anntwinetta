@@ -34,6 +34,9 @@ void _lotusPreProcessing(LotusRenderer* r) {
         if (transform != NULL) {
             *transform->model = lmIdentity();
             
+            // Apply Scaling
+            *transform->model = lmMulMat4(*transform->model, lmScaleMat4(transform->scale->x, transform->scale->y, transform->scale->z));
+
             // Apply Rotations
             *transform->model = lmMulMat4(*transform->model, lmRotMat4(1, 0, 0, transform->rotation->x));
             *transform->model = lmMulMat4(*transform->model, lmRotMat4(0, 1, 0, transform->rotation->y));
@@ -41,10 +44,6 @@ void _lotusPreProcessing(LotusRenderer* r) {
             
             // Apply Translations
             *transform->model = lmMulMat4(*transform->model, lmTransMat4(transform->location->x, transform->location->y, transform->location->z));
-
-            // Apply Scaling
-            *transform->model = lmMulMat4(*transform->model, lmScaleMat4(transform->scale->x, transform->scale->y, transform->scale->z));
-
         }
         _lotusSetUniformValue(&material->shader, UMODEL_INDEX, (!transform) ? &identity : transform->model);
         _lotusSetUniformValue(&material->shader, UVIEW_INDEX, lotusGetViewMatrix());
