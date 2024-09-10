@@ -49,7 +49,6 @@ unsigned char lotusIsMouseButtonPressed(LotusMouseButton button) { return _lotus
 unsigned char lotusIsMouseButtonTriggered(LotusMouseButton button) { return _lotusIsMouseButtonTriggered(button); }
 unsigned char lotusIsMouseButtonReleased(LotusMouseButton button) { return _lotusIsMouseButtonReleased(button); }
 
-
 // External Rendering API
 void lotusPreProcess (void) {
     if (LOTUS.camera != NULL) _lotusUpdateCam(LOTUS.window);
@@ -59,14 +58,12 @@ void lotusPosProcess(void) { _lotusPostProcessing(&LOTUS.renderer); }
 void lotusProcess(void) {
     for (int call = 0; call < LOTUS.renderer.ncalls; call++) {
         LotusDrawCall* dc = &LOTUS.renderer.calls[call];
-        glBindVertexArray(dc->vao);
         if (dc->material) {
             glUseProgram(dc->material->shader.program);
-            _lotusSendUniform(&dc->material->shader, UMODEL_INDEX);
-            _lotusSendUniform(&dc->material->shader, UVIEW_INDEX);
-            _lotusSendUniform(&dc->material->shader, UPROJ_INDEX);
+            for (int i = 0; i < dc->nuniforms; i++) { _lotusSendUniform(&dc->material->shader, i); }
             lotusReleaseMaterial(dc->material);
         }
+        glBindVertexArray(dc->vao);
         glDrawArrays(GL_TRIANGLES, 0, dc->nvertices);
         glBindVertexArray(0);
     }

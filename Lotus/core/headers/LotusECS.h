@@ -14,6 +14,9 @@
 
 typedef enum LOTUS_UNIFORM_TYPE {
     UTYPE_MAT4=0,
+    UTYPE_VEC2,
+    UTYPE_VEC3,
+    UTYPE_VEC4,
     UTYPE_COUNT
 } LOTUS_UNIFORM_TYPE;
 
@@ -160,11 +163,13 @@ LOTUS_API void lotusSetMesh(LotusEntity* e, float* vertices, unsigned short nver
 
 // LOTUS MATERIAL API
 LOTUS_API void lotusRemMaterial(LotusEntity* e);
-LOTUS_API void lotusDelMaterial(unsigned char MAID);
+LOTUS_API void lotusDelMaterial(unsigned char MAID);    // TODO: remove the material from any entities with it!
 LOTUS_API void lotusReleaseMaterial(LotusMaterial_itf* m);
 LOTUS_API unsigned char lotusGetMaterialID(LotusEntity* e);
 LOTUS_API LotusMaterial_itf* lotusGetMaterial(LotusEntity* e);
 LOTUS_API void lotusSetMaterial(LotusEntity* e, unsigned char MAID);
+LOTUS_API void lotusSendUniform(unsigned char MAID, unsigned char uindex);
+LOTUS_API void lotusSetUniform(unsigned char MAID, unsigned char uindex, void* uvalue);
 LOTUS_API unsigned char lotusMakeMaterial(const char* vshader, const char* fshader, unsigned int nuniforms, const char** unames, unsigned int* utypes,  void** uvalues);
 
 

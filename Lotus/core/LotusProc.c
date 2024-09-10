@@ -29,8 +29,10 @@ void _lotusPreProcessing(LotusRenderer* r) {
         LotusMesh_itf* mesh = lotusGetMesh(&ents[e]);
         if (!mesh) continue;
         
+        LotusDrawCall* dc = &r->calls[r->ncalls++];
         LotusMaterial_itf* material = lotusGetMaterial(&ents[e]);
         LotusTransform_itf* transform = lotusGetTransform(&ents[e]);
+        
         if (transform != NULL) {
             *transform->model = lmIdentity();
             
@@ -45,11 +47,14 @@ void _lotusPreProcessing(LotusRenderer* r) {
             // Apply Translations
             *transform->model = lmMulMat4(*transform->model, lmTransMat4(transform->location->x, transform->location->y, transform->location->z));
         }
-        _lotusSetUniformValue(&material->shader, UMODEL_INDEX, (!transform) ? &identity : transform->model);
-        _lotusSetUniformValue(&material->shader, UVIEW_INDEX, lotusGetViewMatrix());
-        _lotusSetUniformValue(&material->shader, UPROJ_INDEX, lotusGetProjMatrix());
+        
+        if (material != NULL) {
+            dc->nuniforms = material->nuniforms;
+            _lotusSetUniformValue(&material->shader, UMODEL_INDEX, (!transform) ? &identity : transform->model);
+            _lotusSetUniformValue(&material->shader, UVIEW_INDEX, lotusGetViewMatrix());
+            _lotusSetUniformValue(&material->shader, UPROJ_INDEX, lotusGetProjMatrix());
+        }
 
-        LotusDrawCall* dc = &r->calls[r->ncalls++];
         dc->type = LOTUS_DRAW_MONO;
         dc->vao = mesh->vao;
         dc->vbo = mesh->vbo;

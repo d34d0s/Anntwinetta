@@ -18,6 +18,7 @@ typedef struct LotusDrawCall {
     LotusDrawType type;
     unsigned int vao;
     unsigned int vbo;
+    unsigned char nuniforms;
     unsigned short nvertices;
     LotusMaterial_itf* material;
 } LotusDrawCall;

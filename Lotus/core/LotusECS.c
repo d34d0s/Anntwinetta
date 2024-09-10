@@ -16,6 +16,91 @@ unsigned short _lotusHashMesh(float* vertices, unsigned short nvertices) {
     } return hash;
 }
 
+void _lotusMakeShader(unsigned int* program, const char* vshader, const char* fshader) {
+    *program = glCreateProgram();
+    
+    unsigned int _vshader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(_vshader, 1, &vshader, NULL);
+    glCompileShader(_vshader);
+    
+    int vsuccess;
+    glGetShaderiv(_vshader, GL_COMPILE_STATUS, &vsuccess);
+    if (!vsuccess) {
+        char infoLog[512];
+        glGetShaderInfoLog(_vshader, 512, NULL, infoLog);
+        printf("ERROR::VERTEX_SHADER::COMPILATION_FAILED\n%s\n", infoLog);
+    }
+    
+    unsigned int _fshader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(_fshader, 1, &fshader, NULL);
+    glCompileShader(_fshader);
+    
+    int fsuccess;
+    glGetShaderiv(_fshader, GL_COMPILE_STATUS, &fsuccess);
+    if (!fsuccess) {
+        char infoLog[512];
+        glGetShaderInfoLog(_fshader, 512, NULL, infoLog);
+        printf("ERROR::FRAGMENT_SHADER::COMPILATION_FAILED\n%s\n", infoLog);
+    }
+
+    glAttachShader(*program, _vshader);
+    glAttachShader(*program, _fshader);
+    glLinkProgram(*program);
+
+    int success;
+    glGetProgramiv(*program, GL_LINK_STATUS, &success);
+    if (!success) {
+        char infoLog[512];
+        glGetProgramInfoLog(*program, 512, NULL, infoLog);
+        printf("ERROR::SHADER::PROGRAM::LINKING_FAILED\n%s\n", infoLog);
+    } glDeleteShader(_vshader); glDeleteShader(_fshader);
+}
+
+void _lotusMakeUniform(LotusShader_itf* shader, unsigned char uindex, const char* uname, unsigned char utype, void* uvalue) {
+    if (shader->program != -1) {
+        shader->uniforms[uindex] = (LotusUniform_itf){.name=uname, .utype=utype, .value=uvalue, .location=glGetUniformLocation(shader->program, uname)};
+
+        if (shader->uniforms[uindex].location == -1) {
+            _lotusLogError("ERROR RETRIEVING UNIFORM LOCATION: RES[%d]", shader->uniforms[uindex].location); return;
+        }
+    } else _lotusLogError("ERROR IN SHADER COMPILATION/LINKING: PROGRAM[%d]\n", shader->program); return;
+
+}
+
+void _lotusSetUniformValue(LotusShader_itf* shader, unsigned char uindex, void* uvalue) {
+    if (shader->program != -1) {
+        glUseProgram(shader->program);
+        LotusUniform_itf* uni = &shader->uniforms[uindex];
+        if (uni->location != -1) {
+            uni->value=uvalue;
+        } else _lotusLogError("ERROR IN SHADER COMPILATION/LINKING: PROGRAM[%d]\n", shader->program); return;
+    }
+}
+
+void _lotusSendUniform(LotusShader_itf* shader, unsigned char uindex) {
+    if (shader->program != -1) {
+        glUseProgram(shader->program);
+        LotusUniform_itf* uni = &shader->uniforms[uindex];
+        if (uni->value != NULL) {
+            switch (uni->utype) {
+                case UTYPE_MAT4:
+                    glUniformMatrix4fv(uni->location, 1, GL_FALSE, uni->value);
+                    break;
+                case UTYPE_VEC2:
+                    glUniform2fv(uni->location, 1, uni->value);
+                    break;
+                case UTYPE_VEC3:
+                    glUniform3fv(uni->location, 1, uni->value);
+                    break;
+                case UTYPE_VEC4:
+                    glUniform4fv(uni->location, 1, uni->value);
+                    break;
+                default: return; break;
+            }
+        }
+    }
+}
+
 void _LOTUS_QUELL_ENTITY(LotusEntity* e) {
     if (e->state & (1<<0)) {
         _LOTUS_ECS._quelled[_LOTUS_ECS._nquelled] = e->EID;
@@ -185,80 +270,12 @@ void lotusRemMesh(LotusEntity* e) {
 
 
 // MATERIAL COMPONENT
-void _lotusMakeShader(unsigned int* program, const char* vshader, const char* fshader) {
-    *program = glCreateProgram();
-    
-    unsigned int _vshader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(_vshader, 1, &vshader, NULL);
-    glCompileShader(_vshader);
-    
-    int vsuccess;
-    glGetShaderiv(_vshader, GL_COMPILE_STATUS, &vsuccess);
-    if (!vsuccess) {
-        char infoLog[512];
-        glGetShaderInfoLog(_vshader, 512, NULL, infoLog);
-        printf("ERROR::VERTEX_SHADER::COMPILATION_FAILED\n%s\n", infoLog);
-    }
-    
-    unsigned int _fshader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(_fshader, 1, &fshader, NULL);
-    glCompileShader(_fshader);
-    
-    int fsuccess;
-    glGetShaderiv(_fshader, GL_COMPILE_STATUS, &fsuccess);
-    if (!fsuccess) {
-        char infoLog[512];
-        glGetShaderInfoLog(_fshader, 512, NULL, infoLog);
-        printf("ERROR::FRAGMENT_SHADER::COMPILATION_FAILED\n%s\n", infoLog);
-    }
-
-    glAttachShader(*program, _vshader);
-    glAttachShader(*program, _fshader);
-    glLinkProgram(*program);
-
-    int success;
-    glGetProgramiv(*program, GL_LINK_STATUS, &success);
-    if (!success) {
-        char infoLog[512];
-        glGetProgramInfoLog(*program, 512, NULL, infoLog);
-        printf("ERROR::SHADER::PROGRAM::LINKING_FAILED\n%s\n", infoLog);
-    } glDeleteShader(_vshader); glDeleteShader(_fshader);
+void lotusSetUniform(unsigned char MAID, unsigned char uindex, void* uvalue) {
+    _lotusSetUniformValue(&_LOTUS_MATERIAL._shader[MAID], uindex, uvalue);
 }
 
-void _lotusMakeUniform(LotusShader_itf* shader, unsigned char index, const char* name, unsigned char utype, void* value) {
-    if (shader->program != -1) {
-        shader->uniforms[index] = (LotusUniform_itf){.name=name, .utype=utype, .value=value, .location=glGetUniformLocation(shader->program, name)};
-
-        if (shader->uniforms[index].location == -1) {
-            _lotusLogError("ERROR RETRIEVING UNIFORM LOCATION: RES[%d]", shader->uniforms[index].location); return;
-        }
-    } else _lotusLogError("ERROR IN SHADER COMPILATION/LINKING: PROGRAM[%d]\n", shader->program); return;
-
-}
-
-void _lotusSetUniformValue(LotusShader_itf* shader, unsigned char index, void* value) {
-    if (shader->program != -1) {
-        glUseProgram(shader->program);
-        LotusUniform_itf* uni = &shader->uniforms[index];
-        if (uni->location != -1) {
-            uni->value=value;
-        } else _lotusLogError("ERROR IN SHADER COMPILATION/LINKING: PROGRAM[%d]\n", shader->program); return;
-    }
-}
-
-void _lotusSendUniform(LotusShader_itf* shader, unsigned char index) {
-    if (shader->program != -1) {
-        glUseProgram(shader->program);
-        LotusUniform_itf* uni = &shader->uniforms[index];
-        if (uni->value != NULL) {
-            switch (uni->utype) {
-                case UTYPE_MAT4:
-                    glUniformMatrix4fv(uni->location, 1, GL_FALSE, uni->value);
-                    break;
-                default: return; break;
-            }
-        }
-    }
+void lotusSendUniform(unsigned char MAID, unsigned char uindex) {
+    _lotusSendUniform(&_LOTUS_MATERIAL._shader[MAID], uindex);
 }
 
 unsigned char lotusMakeMaterial(const char* vshader, const char* fshader, unsigned int nuniforms, const char** unames, unsigned int* utypes,  void** uvalues) {
