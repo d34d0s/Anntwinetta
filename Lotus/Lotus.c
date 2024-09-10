@@ -31,6 +31,7 @@ void lotusInitCamera(unsigned int mode) {
         mode
     );
 }
+
 float lotusGetDeltaTime(void) { return LOTUS.clock.delta; }
 void lotusCamMovUp(void) { _lotusCamMovUp(LOTUS.clock.delta); }
 void lotusCamMovIn(void) { _lotusCamMovIn(LOTUS.clock.delta); }
