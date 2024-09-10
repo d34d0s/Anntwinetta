@@ -28,9 +28,9 @@ void _lotusPreProcessing(LotusRenderer* r) {
     for (int e = 0; e < nents; e++) {
         LotusMesh_itf* mesh = lotusGetMesh(&ents[e]);
         if (!mesh) continue;
-        
         LotusDrawCall* dc = &r->calls[r->ncalls++];
         LotusMaterial_itf* material = lotusGetMaterial(&ents[e]);
+        // printf("PRE-PROCESSING ENTITY: %d | MAID: %d\n", e, material->MAID);
         LotusTransform_itf* transform = lotusGetTransform(&ents[e]);
         
         if (transform != NULL) {
@@ -58,8 +58,8 @@ void _lotusPreProcessing(LotusRenderer* r) {
         dc->type = LOTUS_DRAW_MONO;
         dc->vao = mesh->vao;
         dc->vbo = mesh->vbo;
-        dc->nvertices = mesh->nvertices;
-        dc->material = (!material) ? NULL : material;
+        dc->nverts = mesh->nverts;
+        dc->material = (material == NULL) ? NULL : material;
     }
 }
 

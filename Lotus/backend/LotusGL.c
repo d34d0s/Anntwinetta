@@ -27,10 +27,11 @@ GLFWwindow* _lotusMakeWindowGL(unsigned int w, unsigned int h, const char* t) {
     return window;
 }
 
-void _lotusMakeVBO(unsigned int* vbo, float* vertices, unsigned short nvertices) {
+void _lotusMakeVBO(unsigned int* vbo, unsigned short vsize, unsigned short nverts, unsigned char vColor, float* vertices) {
+    // Lotus vertex format [ verts, vColor, vTexture, vNormal ]
     glGenBuffers(1, vbo);
     glBindBuffer(GL_ARRAY_BUFFER, *vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float)*3*nvertices, vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float)*vsize*nverts, vertices, GL_STATIC_DRAW);
 }
 
 void _lotusMakeVAO(unsigned int* vao, unsigned int* vbo) {
@@ -39,11 +40,18 @@ void _lotusMakeVAO(unsigned int* vao, unsigned int* vbo) {
     glBindBuffer(GL_ARRAY_BUFFER, *vbo);
 }
 
-void _lotusConfigureVAO(unsigned int* vao) {
+void _lotusConfigureVAO(unsigned int* vao, unsigned short vsize, unsigned char vColor) {
     glBindVertexArray(*vao);
-    // configure VAO position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0);
+    
+    // verts vertex-attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, vsize*sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+    
+    // vColor vertex-attribute
+    if (vColor) {
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, vsize*sizeof(float), (void*)(3*sizeof(float)));
+        glEnableVertexAttribArray(1);
+    }
 }
 
 void _lotusMakeEBO();

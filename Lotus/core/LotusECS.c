@@ -8,11 +8,11 @@ LotusEntity** _lotusGetEntityArray(void) { return &_LOTUS_ECS._entities; }
 void lotusSetCID(LotusEntity* e, unsigned short CID_MASK) { e->CID |= CID_MASK; }
 void lotusRemCID(LotusEntity* e, unsigned short CID_MASK) { e->CID &= ~CID_MASK; }
 
-unsigned short _lotusHashMesh(float* vertices, unsigned short nvertices) {
+unsigned short _lotusHashMesh(float* verts, unsigned short nverts) {
     unsigned short hash = 0;
-    for (int i = 0; i < nvertices * 3; i++) {
-        hash += vertices[i];
-        hash += i * 31 / (nvertices+nvertices); 
+    for (int i = 0; i < nverts * 3; i++) {
+        hash += verts[i];
+        hash += i * 31 / (nverts+nverts); 
     } return hash;
 }
 
@@ -122,40 +122,48 @@ void _LOTUS_QUELL_ENTITY(LotusEntity* e) {
 
 void _LOTUS_INIT_MESH(void) {
     _LOTUS_MESH._count=0;
-    _LOTUS_MESH._vertices = (float**)malloc(LOTUS_ENTITY_MAX*sizeof(float*));
-    if (!_LOTUS_MESH._vertices) {
+    _LOTUS_MESH._verts = (float**)malloc(LOTUS_ENTITY_MAX*sizeof(float*));
+    if (!_LOTUS_MESH._verts) {
         _lotusLogError("Error Allocating Memory For Mesh Vertex Array");
         return;
     }
 
-    _LOTUS_MESH._nvertices = (unsigned short*)malloc(LOTUS_ENTITY_MAX*sizeof(unsigned short));
-    if (!_LOTUS_MESH._nvertices) {
+    _LOTUS_MESH._nverts = (unsigned short*)malloc(LOTUS_ENTITY_MAX*sizeof(unsigned short));
+    if (!_LOTUS_MESH._nverts) {
         _lotusLogError("Error Allocating Memory For Mesh NVertex Array");
-        free(_LOTUS_MESH._vertices);
+        free(_LOTUS_MESH._verts);
+        return;
+    }
+    
+    _LOTUS_MESH._vsize = (unsigned short*)malloc(LOTUS_ENTITY_MAX*sizeof(unsigned short));
+    if (!_LOTUS_MESH._vsize) {
+        _lotusLogError("Error Allocating Memory For Mesh Vertex Size Array");
+        free(_LOTUS_MESH._nverts);
+        free(_LOTUS_MESH._verts);
         return;
     }
     
     _LOTUS_MESH._MID = (unsigned short*)malloc(LOTUS_ENTITY_MAX*sizeof(unsigned short));
     if (!_LOTUS_MESH._MID) {
         _lotusLogError("Error Allocating Memory For Mesh MID Array");
-        free(_LOTUS_MESH._vertices);
-        free(_LOTUS_MESH._nvertices);
+        free(_LOTUS_MESH._verts);
+        free(_LOTUS_MESH._nverts);
         return;
     }
     
     _LOTUS_MESH._vbo = (unsigned int*)malloc(LOTUS_ENTITY_MAX*sizeof(unsigned int));
     if (!_LOTUS_MESH._vbo) {
         _lotusLogError("Error Allocating Memory For Mesh VBO Array");
-        free(_LOTUS_MESH._vertices);
-        free(_LOTUS_MESH._nvertices);
+        free(_LOTUS_MESH._verts);
+        free(_LOTUS_MESH._nverts);
         return;
     }
     
     _LOTUS_MESH._vao = (unsigned int*)malloc(LOTUS_ENTITY_MAX*sizeof(unsigned int));
     if (!_LOTUS_MESH._vao) {
         _lotusLogError("Error Allocating Memory For Mesh VAO Array");
-        free(_LOTUS_MESH._vertices);
-        free(_LOTUS_MESH._nvertices);
+        free(_LOTUS_MESH._verts);
+        free(_LOTUS_MESH._nverts);
         free(_LOTUS_MESH._vbo);
         return;
     }
@@ -214,20 +222,23 @@ unsigned char lotusQueryCID(LotusEntity* e, unsigned short CID_MASK) {
 
 
 // MESH COMPONENT
-void lotusReleaseMesh(LotusMesh_itf* m) { free(m->vertices); free(m); }
-void lotusSetMesh(LotusEntity* e, float* vertices, unsigned short nvertices) {
+void lotusReleaseMesh(LotusMesh_itf* m) { free(m->verts); free(m); }
+void lotusSetMesh(LotusEntity* e, float* verts, unsigned short nverts, unsigned char vColor) {
     if (_LOTUS_MESH._count+1 > LOTUS_ENTITY_MAX || e->EID > LOTUS_ENTITY_MAX || e->EID < 0) { return; }
+    unsigned short vsize = 3; // Number of floats per vertex
+    if (vColor) vsize+=3;
     _LOTUS_MESH._count++;
-    _LOTUS_MESH._nvertices[e->EID] = nvertices;
-    _LOTUS_MESH._MID[e->EID] = _lotusHashMesh(vertices, nvertices);
-    _LOTUS_MESH._vertices[e->EID] = (float*)malloc(nvertices*3*sizeof(float));
-    if (!_LOTUS_MESH._vertices[e->EID]) {
+    _LOTUS_MESH._vsize[e->EID] = vsize;
+    _LOTUS_MESH._nverts[e->EID] = nverts;
+    _LOTUS_MESH._MID[e->EID] = _lotusHashMesh(verts, nverts);
+    _LOTUS_MESH._verts[e->EID] = (float*)malloc(nverts*vsize*sizeof(float));
+    if (!_LOTUS_MESH._verts[e->EID]) {
         _lotusLogError("Error Allocating Space For Mesh Component Vertex Array");
         return;
-    } memcpy(_LOTUS_MESH._vertices[e->EID], vertices, nvertices*3*sizeof(float));
-    _lotusMakeVBO(&_LOTUS_MESH._vbo[e->EID], _LOTUS_MESH._vertices[e->EID], nvertices);
+    } memcpy(_LOTUS_MESH._verts[e->EID], verts, nverts*vsize*sizeof(float));
+    _lotusMakeVBO(&_LOTUS_MESH._vbo[e->EID], vsize, nverts, vColor, verts);
     _lotusMakeVAO(&_LOTUS_MESH._vao[e->EID], &_LOTUS_MESH._vbo[e->EID]);
-    _lotusConfigureVAO(&_LOTUS_MESH._vao[e->EID]);
+    _lotusConfigureVAO(&_LOTUS_MESH._vao[e->EID], vsize, vColor);
     lotusSetCID(e, LotusMeshCID);
 }
 
@@ -238,14 +249,14 @@ LotusMesh_itf* lotusGetMesh(LotusEntity* e) {
         _lotusLogError("ERROR ALLOCATING SPACE FOR MESH INTERFACE");
         return NULL;
     }
-    m->vertices = malloc(sizeof(float)*3*_LOTUS_MESH._nvertices[e->EID]);
-    if (!m->vertices) {
+    m->verts = malloc(sizeof(float)*_LOTUS_MESH._vsize[e->EID]*_LOTUS_MESH._nverts[e->EID]);
+    if (!m->verts) {
         _lotusLogError("ERROR ALLOCATING SPACE FOR MESH INTERFACE VERTEX DATA ARRAY");
         free(m);
         return NULL;
     }
-    memcpy(m->vertices, _LOTUS_MESH._vertices[e->EID], sizeof(float)*3*_LOTUS_MESH._nvertices[e->EID]);
-    if (!m->vertices) {
+    memcpy(m->verts, _LOTUS_MESH._verts[e->EID], sizeof(float)*_LOTUS_MESH._vsize[e->EID]*_LOTUS_MESH._nverts[e->EID]);
+    if (!m->verts) {
         _lotusLogError("ERROR COPYING MEMORY TO MESH INTERFACE VERTEX DATA ARRAY");
         free(m);
         return NULL;
@@ -253,7 +264,8 @@ LotusMesh_itf* lotusGetMesh(LotusEntity* e) {
     m->MID = _LOTUS_MESH._MID[e->EID];
     m->vbo = _LOTUS_MESH._vbo[e->EID];
     m->vao = _LOTUS_MESH._vao[e->EID];
-    m->nvertices = _LOTUS_MESH._nvertices[e->EID];
+    m->vsize = _LOTUS_MESH._vsize[e->EID];
+    m->nverts = _LOTUS_MESH._nverts[e->EID];
     return m;
 }
 
@@ -264,8 +276,9 @@ void lotusRemMesh(LotusEntity* e) {
     _LOTUS_MESH._MID[e->EID] = -1;
     _LOTUS_MESH._vbo[e->EID] = -1;
     _LOTUS_MESH._vao[e->EID] = -1;
-    _LOTUS_MESH._nvertices[e->EID] = -1;
-    _LOTUS_MESH._vertices[e->EID] = NULL;
+    _LOTUS_MESH._vsize[e->EID] = -1;
+    _LOTUS_MESH._nverts[e->EID] = -1;
+    _LOTUS_MESH._verts[e->EID] = NULL;
 }
 
 
@@ -301,6 +314,7 @@ unsigned char lotusMakeMaterial(const char* vshader, const char* fshader, unsign
 
 void lotusSetMaterial(LotusEntity* e, unsigned char MAID) {
     if (e->EID > LOTUS_ENTITY_MAX || e->EID < 0 || MAID < 0 || MAID > _LOTUS_MATERIAL._count) { return; }
+    printf("SETTING MAID: %d | FOR ENTITY: %d\n", MAID, e->EID);
     _LOTUS_MATERIAL._emap[e->EID] = MAID;
     lotusSetCID(e, LotusMaterialCID);
 }

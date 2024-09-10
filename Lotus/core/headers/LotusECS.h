@@ -35,11 +35,12 @@ typedef struct LotusEntity {
 
 // COMPONENT INTERFACES
 typedef struct LotusMesh_itf {
-    float* vertices;
+    float* verts;
     unsigned int vbo;
     unsigned int vao;
     unsigned short MID;
-    unsigned short nvertices;
+    unsigned short vsize;
+    unsigned short nverts;
 } LotusMesh_itf;
 
 typedef struct LotusUniform_itf {
@@ -75,11 +76,12 @@ typedef struct LotusTransform_itf {
 // INTERNAL COMPONENT SoA STORES
 typedef struct _LOTUS_MESH_INTERNAL {
     unsigned short _count;
-    float** _vertices;
+    float** _verts;
     unsigned int* _vbo;
     unsigned int* _vao;
     unsigned short* _MID;
-    unsigned short* _nvertices;
+    unsigned short* _vsize;
+    unsigned short* _nverts;
 } _LOTUS_MESH_INTERNAL;
 static _LOTUS_MESH_INTERNAL _LOTUS_MESH;
 
@@ -119,7 +121,7 @@ static _LOTUS_ECS_INTERNAL _LOTUS_ECS;
 
 unsigned short _lotusGetEntityCount(void);
 LotusEntity** _lotusGetEntityArray(void);
-unsigned short _lotusHashMesh(float* vertices, unsigned short nvertices);
+unsigned short _lotusHashMesh(float* vertices, unsigned short nverts);
 
 void _LOTUS_INIT_ECS(void);
 void _LOTUS_QUELL_ENTITY(LotusEntity* e);
@@ -158,7 +160,7 @@ LOTUS_API void lotusReleaseMesh(LotusMesh_itf* m);
 LOTUS_API LotusMesh_itf* lotusGetMesh(LotusEntity* e);
 
 // Set A Mesh Component To A Given Entity
-LOTUS_API void lotusSetMesh(LotusEntity* e, float* vertices, unsigned short nvertices);
+LOTUS_API void lotusSetMesh(LotusEntity* e, float* verts, unsigned short nverts, unsigned char vColor);
 
 
 // LOTUS MATERIAL API

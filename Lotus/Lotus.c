@@ -65,7 +65,7 @@ void lotusProcess(void) {
             lotusReleaseMaterial(dc->material);
         }
         glBindVertexArray(dc->vao);
-        glDrawArrays(GL_TRIANGLES, 0, dc->nvertices);
+        glDrawArrays(GL_TRIANGLES, 0, dc->nverts);
         glBindVertexArray(0);
     }
 }

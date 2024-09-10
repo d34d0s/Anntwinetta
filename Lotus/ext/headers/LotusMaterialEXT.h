@@ -9,22 +9,41 @@
 #include "../../core/headers/lotus_types.h"
 
 static const char *vsrc001 = "#version 330 core\n"
-    "layout(location = 0) in vec3 aPos;\n"
+    "layout(location = 0) in vec3 vLocation;\n"
     "uniform mat4 umodel;\n"
     "uniform mat4 uview;\n"
     "uniform mat4 uproj;\n"
     "void main() {\n"
-    "   gl_Position = uproj * uview * umodel * vec4(aPos, 1.0);\n"
+    "   gl_Position = uproj * uview * umodel * vec4(vLocation, 1.0);\n"
     "}\n";
 
 static const char *fsrc001 = "#version 330 core\n"
     "out vec4 FragColor;\n"
     "void main() {\n"
-    "   FragColor = vec4(1.0, 0.2, 0.5, 1.0);\n"
+    "   FragColor = vec4(1.0);\n"
     "}\n";
 
-static unsigned char LotusDefaultMaterial_001;
+static const char *vsrc002 = "#version 330 core\n"
+    "layout(location = 0) in vec3 vLocation;\n"
+    "layout(location = 1) in vec3 vColor;\n"
+    "uniform mat4 umodel;\n"
+    "uniform mat4 uview;\n"
+    "uniform mat4 uproj;\n"
+    "out vec3 vColorOut;\n"
+    "void main() {\n"
+    "   gl_Position = uproj * uview * umodel * vec4(vLocation, 1.0);\n"
+    "   vColorOut = vColor;\n"
+    "}\n";
 
-LOTUS_API void lotusInitMaterialEXT(void);
+static const char *fsrc002 = "#version 330 core\n"
+    "in vec3 vColorOut;\n"
+    "out vec4 FragColor;\n"
+    "void main() {\n"
+    "   FragColor = vec4(vColorOut, 1.0);\n"
+    "}\n";
+
+LOTUS_API unsigned char LotusDefaultMaterial_001(void);
+LOTUS_API unsigned char LotusDefaultMaterial_002(void);
+
 
 #endif
