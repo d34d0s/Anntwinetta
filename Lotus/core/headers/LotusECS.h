@@ -27,6 +27,13 @@ typedef enum LOTUS_UNIFORM_INDEX {
     UINDEX_COUNT
 } LOTUS_UNIFORM_INDEX;
 
+typedef enum LOTUS_TEXTURE_TYPE {
+    TEXTYPE_BMP,
+    TEXTYPE_JPG=0x1907,     // GL_RGB  Equivalent
+    TEXTYPE_PNG=0x1908,     // GL_RGBA Equivalent
+    TEXTYPE_COUNT
+} LOTUS_TEXTURE_TYPE;
+
 typedef struct LotusEntity {
     unsigned char state;    // state Bitfield   [quell, ...(NULL)]
     unsigned short EID;     // Entity Identifier
@@ -73,6 +80,15 @@ typedef struct LotusTransform_itf {
     LMvec3* rotation;
 } LotusTransform_itf;
 
+typedef struct LotusTexture_itf {
+    unsigned int glid;
+    unsigned char* raw;
+    unsigned int TEXID;
+    unsigned int nchannels;
+    unsigned int width, height;
+    LOTUS_TEXTURE_TYPE textype;
+} LotusTexture_itf;
+
 // INTERNAL COMPONENT SoA STORES
 typedef struct _LOTUS_MESH_INTERNAL {
     unsigned short _count;
@@ -87,6 +103,14 @@ static _LOTUS_MESH_INTERNAL _LOTUS_MESH;
 
 typedef struct _LOTUS_TEXTURE_INTERNAL {
     unsigned short _count;
+    unsigned int _glid[1000];
+    unsigned char* _raw[1000];
+    unsigned int _width[1000];
+    unsigned int _TEXID[1000];
+    unsigned int _height[1000];
+    unsigned int _nchannels[1000];
+    LOTUS_TEXTURE_TYPE _textype[1000];
+    unsigned int _emap[LOTUS_ENTITY_MAX];    // maps EIDs -> MAIDs
 } _LOTUS_TEXTURE_INTERNAL;
 static _LOTUS_TEXTURE_INTERNAL _LOTUS_TEXTURE;
 
@@ -160,7 +184,7 @@ LOTUS_API void lotusReleaseMesh(LotusMesh_itf* m);
 LOTUS_API LotusMesh_itf* lotusGetMesh(LotusEntity* e);
 
 // Set A Mesh Component To A Given Entity
-LOTUS_API void lotusSetMesh(LotusEntity* e, float* verts, unsigned short nverts, unsigned char vColor);
+LOTUS_API void lotusSetMesh(LotusEntity* e, float* verts, unsigned short nverts, unsigned char vColor, unsigned char vTexture);
 
 
 // LOTUS MATERIAL API
@@ -181,6 +205,14 @@ LOTUS_API void lotusReleaseTransform(LotusTransform_itf* t);
 LOTUS_API LotusTransform_itf* lotusGetTransform(LotusEntity* e);
 LOTUS_API void lotusSetTransform(LotusEntity* e, LMvec3 scale, LMvec3 rotation, LMvec3 location);
 
-LOTUS_API void lotusSetTexture();
+
+// LOTUS TEXTURE API
+LOTUS_API void lotusRemTexture(LotusEntity* e);
+LOTUS_API void lotusDelTexture(unsigned int TEXID);
+LOTUS_API unsigned int lotusGetTextureID(LotusEntity* e);
+LOTUS_API LotusTexture_itf* lotusGetTexture(LotusEntity* e);
+LOTUS_API unsigned int lotusReleaseTexture(LotusTexture_itf* t);
+LOTUS_API void lotusSetTexture(LotusEntity* e, unsigned int TEXID);
+LOTUS_API unsigned int lotusMakeTexture(const char* srcpath, LOTUS_TEXTURE_TYPE textype);
 
 #endif

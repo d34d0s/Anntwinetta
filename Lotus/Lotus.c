@@ -59,7 +59,10 @@ void lotusPosProcess(void) { _lotusPostProcessing(&LOTUS.renderer); }
 void lotusProcess(void) {
     for (int call = 0; call < LOTUS.renderer.ncalls; call++) {
         LotusDrawCall* dc = &LOTUS.renderer.calls[call];
-        if (dc->material) {
+        if (dc->texture != NULL) {
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, dc->texture->glid);
+        } if (dc->material != NULL) {
             glUseProgram(dc->material->shader.program);
             for (int i = 0; i < dc->nuniforms; i++) { _lotusSendUniform(&dc->material->shader, i); }
             lotusReleaseMaterial(dc->material);

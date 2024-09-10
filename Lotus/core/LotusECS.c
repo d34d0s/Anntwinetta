@@ -1,6 +1,8 @@
 #include "headers/LotusECS.h"
 #include "../backend/headers/LotusGL.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "vendor/STB/stb_image.h"
 
 // Lotus ECS Internal API
 unsigned short _lotusGetEntityCount(void) { return _LOTUS_ECS._count; }
@@ -223,10 +225,11 @@ unsigned char lotusQueryCID(LotusEntity* e, unsigned short CID_MASK) {
 
 // MESH COMPONENT
 void lotusReleaseMesh(LotusMesh_itf* m) { free(m->verts); free(m); }
-void lotusSetMesh(LotusEntity* e, float* verts, unsigned short nverts, unsigned char vColor) {
+void lotusSetMesh(LotusEntity* e, float* verts, unsigned short nverts, unsigned char vColor, unsigned char vTexture) {
     if (_LOTUS_MESH._count+1 > LOTUS_ENTITY_MAX || e->EID > LOTUS_ENTITY_MAX || e->EID < 0) { return; }
     unsigned short vsize = 3; // Number of floats per vertex
-    if (vColor) vsize+=3;
+    vsize+=3*vColor;
+    vsize+=2*vTexture;
     _LOTUS_MESH._count++;
     _LOTUS_MESH._vsize[e->EID] = vsize;
     _LOTUS_MESH._nverts[e->EID] = nverts;
@@ -236,9 +239,9 @@ void lotusSetMesh(LotusEntity* e, float* verts, unsigned short nverts, unsigned 
         _lotusLogError("Error Allocating Space For Mesh Component Vertex Array");
         return;
     } memcpy(_LOTUS_MESH._verts[e->EID], verts, nverts*vsize*sizeof(float));
-    _lotusMakeVBO(&_LOTUS_MESH._vbo[e->EID], vsize, nverts, vColor, verts);
+    _lotusMakeVBO(&_LOTUS_MESH._vbo[e->EID], vsize, nverts, verts);
     _lotusMakeVAO(&_LOTUS_MESH._vao[e->EID], &_LOTUS_MESH._vbo[e->EID]);
-    _lotusConfigureVAO(&_LOTUS_MESH._vao[e->EID], vsize, vColor);
+    _lotusConfigureVAO(&_LOTUS_MESH._vao[e->EID], vsize, vColor, vTexture);
     lotusSetCID(e, LotusMeshCID);
 }
 
@@ -291,35 +294,20 @@ void lotusSendUniform(unsigned char MAID, unsigned char uindex) {
     _lotusSendUniform(&_LOTUS_MATERIAL._shader[MAID], uindex);
 }
 
-unsigned char lotusMakeMaterial(const char* vshader, const char* fshader, unsigned int nuniforms, const char** unames, unsigned int* utypes,  void** uvalues) {
-    if (_LOTUS_MATERIAL._count+1 > (1 << 8)-1) { return -1; }
-    unsigned char MAID = _LOTUS_MATERIAL._count;
-    _LOTUS_MATERIAL._MAID[MAID] = MAID;
-    _LOTUS_MATERIAL._ambient[MAID] = 1.0f;
-    _LOTUS_MATERIAL._diffuse[MAID] = 1.0f;
-    _LOTUS_MATERIAL._specular[MAID] = 1.0f;
-    _LOTUS_MATERIAL._shader[MAID].vsrc = vshader;
-    _LOTUS_MATERIAL._shader[MAID].fsrc = fshader;
-    _lotusMakeShader(&_LOTUS_MATERIAL._shader[MAID].program, vshader, fshader);
-    if (nuniforms > 0 && nuniforms < 17) {
-        // TODO: retrieve uview, and uproj from LotusCamera
-        _LOTUS_MATERIAL._nuniforms[MAID] = nuniforms;
-        for (int i = 0; i < nuniforms; i++) {
-            _lotusMakeUniform(&_LOTUS_MATERIAL._shader[MAID], i, unames[i], utypes[i], uvalues[i]);
-            _lotusSendUniform(&_LOTUS_MATERIAL._shader[MAID], i);
-        }
-    }
-    _LOTUS_MATERIAL._count++; return MAID;
-}
 
 void lotusSetMaterial(LotusEntity* e, unsigned char MAID) {
     if (e->EID > LOTUS_ENTITY_MAX || e->EID < 0 || MAID < 0 || MAID > _LOTUS_MATERIAL._count) { return; }
-    printf("SETTING MAID: %d | FOR ENTITY: %d\n", MAID, e->EID);
     _LOTUS_MATERIAL._emap[e->EID] = MAID;
     lotusSetCID(e, LotusMaterialCID);
 }
 
 void lotusReleaseMaterial(LotusMaterial_itf* m) { free(m); }
+
+unsigned char lotusGetMaterialID(LotusEntity* e) {
+    if (e->EID > LOTUS_ENTITY_MAX || e->EID < 0 || !lotusQueryCID(e, LotusMaterialCID) || _LOTUS_MATERIAL._emap[e->EID] == -1) { return -1; }
+    return _LOTUS_MATERIAL._emap[e->EID];
+}
+
 LotusMaterial_itf* lotusGetMaterial(LotusEntity* e) {
     unsigned char MAID = lotusGetMaterialID(e);
     if (MAID == -1) { return NULL; }
@@ -339,11 +327,6 @@ LotusMaterial_itf* lotusGetMaterial(LotusEntity* e) {
     return m;
 }
 
-unsigned char lotusGetMaterialID(LotusEntity* e) {
-    if (e->EID > LOTUS_ENTITY_MAX || e->EID < 0 || !lotusQueryCID(e, LotusMaterialCID) || _LOTUS_MATERIAL._emap[e->EID] == -1) { return -1; }
-    return _LOTUS_MATERIAL._emap[e->EID];
-}
-
 void lotusRemMaterial(LotusEntity* e) {
     if (!lotusQueryCID(e, LotusMaterialCID) || e->EID > LOTUS_ENTITY_MAX || e->EID < 0) { return; }
     _LOTUS_MATERIAL._emap[e->EID] = -1;
@@ -351,7 +334,7 @@ void lotusRemMaterial(LotusEntity* e) {
 }
 
 void lotusDelMaterial(unsigned char MAID) {
-    if (_LOTUS_MATERIAL._count+1 > (1 << 8)-1) { return; }
+    if (_LOTUS_MATERIAL._count-1 > 0) { return; }
     _LOTUS_MATERIAL._ambient[MAID] = -1;
     _LOTUS_MATERIAL._diffuse[MAID] = -1;
     _LOTUS_MATERIAL._specular[MAID] = -1;
@@ -365,6 +348,27 @@ void lotusDelMaterial(unsigned char MAID) {
             _LOTUS_MATERIAL._shader[MAID].uniforms[i] = (LotusUniform_itf){.location=-1, .utype=-1, .value=NULL, .name=NULL};
         }
     } _LOTUS_MATERIAL._count--;
+}
+
+unsigned char lotusMakeMaterial(const char* vshader, const char* fshader, unsigned int nuniforms, const char** unames, unsigned int* utypes,  void** uvalues) {
+    if (_LOTUS_MATERIAL._count+1 > (1 << 8)-1) { return -1; }
+    unsigned char MAID = _LOTUS_MATERIAL._count;
+    _LOTUS_MATERIAL._MAID[MAID] = MAID;
+    _LOTUS_MATERIAL._ambient[MAID] = 1.0f;
+    _LOTUS_MATERIAL._diffuse[MAID] = 1.0f;
+    _LOTUS_MATERIAL._specular[MAID] = 1.0f;
+    _LOTUS_MATERIAL._shader[MAID].vsrc = vshader;
+    _LOTUS_MATERIAL._shader[MAID].fsrc = fshader;
+    _lotusMakeShader(&_LOTUS_MATERIAL._shader[MAID].program, vshader, fshader);
+    if (nuniforms > 0 && nuniforms < 17) {
+        // TODO: retrieve uview, and uproj from LotusCamera
+        _LOTUS_MATERIAL._nuniforms[MAID] = nuniforms;
+        for (int i = 0; i < nuniforms; i++) {
+            _lotusMakeUniform(&_LOTUS_MATERIAL._shader[MAID], i, unames[i], utypes[i], uvalues[i]);
+            _lotusSendUniform(&_LOTUS_MATERIAL._shader[MAID], i);
+        }
+    }
+    _LOTUS_MATERIAL._count++; return MAID;
 }
 
 
@@ -406,6 +410,78 @@ void lotusRemTransform(LotusEntity* e) {
 
 
 // TEXTURE COMPONENT
-void lotusSetTexture() {
-
+void lotusSetTexture(LotusEntity* e, unsigned int TEXID) {
+    if (e->EID > LOTUS_ENTITY_MAX || e->EID < 0 || TEXID < 0 || TEXID > _LOTUS_TEXTURE._count) { return; }
+    _LOTUS_TEXTURE._emap[e->EID] = TEXID;
+    lotusSetCID(e, LotusTextureCID);
 }
+
+unsigned int lotusReleaseTexture(LotusTexture_itf* t) { free(t); }
+
+unsigned int lotusGetTextureID(LotusEntity* e) {
+    if (e->EID > LOTUS_ENTITY_MAX || e->EID < 0 || !lotusQueryCID(e, LotusTextureCID) || _LOTUS_TEXTURE._emap[e->EID] < 0 || _LOTUS_TEXTURE._emap[e->EID] > 1000) { return -1; }
+    return _LOTUS_TEXTURE._emap[e->EID];
+}
+
+LotusTexture_itf* lotusGetTexture(LotusEntity* e) {
+    unsigned int TEXID = lotusGetTextureID(e);
+    if (TEXID == -1) { return NULL; }
+
+    LotusTexture_itf* t = (LotusTexture_itf*)malloc(sizeof(LotusTexture_itf));
+    if (!t) {
+        _lotusLogError("Error Allocating Memory For LotusTexture Interface");
+        return NULL;
+    }
+
+    t->raw = _LOTUS_TEXTURE._raw[TEXID];
+    t->glid = _LOTUS_TEXTURE._glid[TEXID];
+    t->TEXID = _LOTUS_TEXTURE._TEXID[TEXID];
+    t->width = _LOTUS_TEXTURE._width[TEXID];
+    t->height = _LOTUS_TEXTURE._height[TEXID];
+    t->textype = _LOTUS_TEXTURE._textype[TEXID];
+    t->nchannels = _LOTUS_TEXTURE._nchannels[TEXID];
+    return t;
+}
+
+void lotusRemTexture(LotusEntity* e) {
+    if (!lotusQueryCID(e, LotusTextureCID) || e->EID > LOTUS_ENTITY_MAX || e->EID < 0) { return; }
+    _LOTUS_TEXTURE._emap[e->EID] = -1;
+    lotusRemCID(e, LotusTextureCID);
+}
+
+void lotusDelTexture(unsigned int TEXID) {
+    if (_LOTUS_TEXTURE._count-1 > 0) { return; }
+    _LOTUS_TEXTURE._raw[TEXID] = NULL;
+    _LOTUS_TEXTURE._glid[TEXID] = -1;
+    _LOTUS_TEXTURE._TEXID[TEXID] = -1;
+    _LOTUS_TEXTURE._width[TEXID] = -1;
+    _LOTUS_TEXTURE._height[TEXID] = -1;
+    _LOTUS_TEXTURE._textype[TEXID] = -1;
+    _LOTUS_TEXTURE._nchannels[TEXID] = -1;
+    _LOTUS_TEXTURE._count--;
+}
+
+unsigned int lotusMakeTexture(const char* srcpath, LOTUS_TEXTURE_TYPE textype) {
+    if (_LOTUS_TEXTURE._count+1 > 1000) { return -1; }
+    unsigned int TEXID = _LOTUS_TEXTURE._count;
+    glGenTextures(1, &_LOTUS_TEXTURE._glid[TEXID]);
+    glBindTexture(GL_TEXTURE_2D, _LOTUS_TEXTURE._glid[TEXID]);
+
+    // TODO: configurable texture wrapping/filtering options
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    // load tex2D with stb
+    _LOTUS_TEXTURE._textype[TEXID] = textype;
+    stbi_set_flip_vertically_on_load(true);
+    _LOTUS_TEXTURE._raw[TEXID] = stbi_load(srcpath, &_LOTUS_TEXTURE._width[TEXID], &_LOTUS_TEXTURE._height[TEXID], &_LOTUS_TEXTURE._nchannels[TEXID], 0);
+    if (_LOTUS_TEXTURE._raw[TEXID]) {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _LOTUS_TEXTURE._width[TEXID], _LOTUS_TEXTURE._height[TEXID], 0, textype, GL_UNSIGNED_BYTE, _LOTUS_TEXTURE._raw[TEXID]);
+        glGenerateMipmap(GL_TEXTURE_2D);
+    } else {
+            _lotusLogError("Failed To Load Texture Data From:\t%s", srcpath); return -1;
+    } stbi_image_free(_LOTUS_TEXTURE._raw[TEXID]); _LOTUS_TEXTURE._count++; return TEXID;
+}
+

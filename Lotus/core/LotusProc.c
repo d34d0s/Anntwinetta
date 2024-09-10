@@ -29,8 +29,8 @@ void _lotusPreProcessing(LotusRenderer* r) {
         LotusMesh_itf* mesh = lotusGetMesh(&ents[e]);
         if (!mesh) continue;
         LotusDrawCall* dc = &r->calls[r->ncalls++];
+        LotusTexture_itf* texture = lotusGetTexture(&ents[e]);
         LotusMaterial_itf* material = lotusGetMaterial(&ents[e]);
-        // printf("PRE-PROCESSING ENTITY: %d | MAID: %d\n", e, material->MAID);
         LotusTransform_itf* transform = lotusGetTransform(&ents[e]);
         
         if (transform != NULL) {
@@ -53,12 +53,19 @@ void _lotusPreProcessing(LotusRenderer* r) {
             _lotusSetUniformValue(&material->shader, UMODEL_INDEX, (!transform) ? &identity : transform->model);
             _lotusSetUniformValue(&material->shader, UVIEW_INDEX, lotusGetViewMatrix());
             _lotusSetUniformValue(&material->shader, UPROJ_INDEX, lotusGetProjMatrix());
+
+            if (texture != NULL) {
+                glUniform1i(glGetUniformLocation(material->shader.program, "texUnit"), 0);
+            } else {
+                glUniform1i(glGetUniformLocation(material->shader.program, "texUnit"), 99);
+            }
         }
 
         dc->type = LOTUS_DRAW_MONO;
         dc->vao = mesh->vao;
         dc->vbo = mesh->vbo;
         dc->nverts = mesh->nverts;
+        dc->texture = (texture == NULL) ? NULL : texture;
         dc->material = (material == NULL) ? NULL : material;
     }
 }

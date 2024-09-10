@@ -4,24 +4,26 @@
 void lotusTriangleMesh(LotusEntity* e) {
     unsigned short lotusTriangleVertCount = 3;
     float lotusTriangleVerts[] = {
-        -0.5f, -0.5f, 0.5f,     1.0, 0.0, 0.0,
-        0.0f,  0.5f, 0.5f,      0.0, 1.0, 0.0,
-        0.5f, -0.5f, 0.5f,      0.0, 0.0, 1.0
+        // vLocation            vColor              vTexture
+        -0.5f, -0.5f, 0.5f,     1.0, 0.0, 0.0,      0.0, 0.0,
+        0.0f,  0.5f, 0.5f,      0.0, 1.0, 0.0,      0.5, 1.0,
+        0.5f, -0.5f, 0.5f,      0.0, 0.0, 1.0,      1.0, 0.0
     };
-    lotusSetMesh(e, lotusTriangleVerts, lotusTriangleVertCount, 1);
+    lotusSetMesh(e, lotusTriangleVerts, lotusTriangleVertCount, 1, 1);
 }
 
 void lotusQuadMesh(LotusEntity* e) {
     unsigned short lotusQuadVertCount = 6;
     float lotusQuadVerts[] = {
-        -0.5f, -0.5f, 0.5f,     1.0, 0.0, 0.0,
-        -0.5f, 0.5f, 0.5f,      0.0, 1.0, 0.0,
-        0.5f, 0.5f, 0.5f,       0.0, 0.0, 1.0,
-        -0.5f, -0.5f, 0.5f,     0.0, 1.0, 1.0,
-        0.5f, 0.5f, 0.5f,       1.0, 1.0, 0.0,
-        0.5f, -0.5f, 0.5f,      1.0, 0.0, 1.0
+        // vLocation           vTexture
+        -0.5f, -0.5f, 0.5f,    0.0, 0.0,
+        -0.5f, 0.5f, 0.5f,     0.0, 1.0,
+        0.5f, 0.5f, 0.5f,      1.0, 1.0,
+        -0.5f, -0.5f, 0.5f,    0.0, 0.0,
+        0.5f, 0.5f, 0.5f,      1.0, 1.0,
+        0.5f, -0.5f, 0.5f,     1.0, 0.0
     };
-    lotusSetMesh(e, lotusQuadVerts, lotusQuadVertCount, 1);
+    lotusSetMesh(e, lotusQuadVerts, lotusQuadVertCount, 0, 1);
 }
 
 void lotusLongQuadMesh(LotusEntity* e) {
@@ -34,7 +36,7 @@ void lotusLongQuadMesh(LotusEntity* e) {
         1.0f, 0.5f, 0.0f,
         1.0f, -0.5f, 0.0f
     };
-    lotusSetMesh(e, lotusLongQuadVerts, lotusLongQuadVertCount, 0);
+    lotusSetMesh(e, lotusLongQuadVerts, lotusLongQuadVertCount, 0, 0);
 }
 
 void lotusCircleMesh(LotusEntity* e) {
@@ -66,7 +68,7 @@ void lotusCircleMesh(LotusEntity* e) {
         lotusCircleVerts[vertIndex++] = 0.0f;
     }
 
-    lotusSetMesh(e, lotusCircleVerts, lotusCircleVertCount, 0);
+    lotusSetMesh(e, lotusCircleVerts, lotusCircleVertCount, 0, 0);
 }
 
 
@@ -130,7 +132,7 @@ void lotusConeMesh(LotusEntity* e) {
         lotusConeVerts[vertIndex++] = z2;
     }
 
-    lotusSetMesh(e, lotusConeVerts, lotusConeVertCount, 0);
+    lotusSetMesh(e, lotusConeVerts, lotusConeVertCount, 0, 0);
 }
 
 void lotusTorusMesh(LotusEntity* e) {
@@ -197,7 +199,7 @@ void lotusTorusMesh(LotusEntity* e) {
         }
     }
 
-    lotusSetMesh(e, lotusTorusVerts, lotusTorusVertCount, 0);
+    lotusSetMesh(e, lotusTorusVerts, lotusTorusVertCount, 0, 0);
 }
 
 void lotusCubeMesh(LotusEntity* e) {
@@ -244,7 +246,7 @@ void lotusCubeMesh(LotusEntity* e) {
         0.5f,  0.5f,  0.5f,  
         -0.5f,  0.5f,  0.5f,  
         -0.5f,  0.5f, -0.5f   
-    }; lotusSetMesh(e, lotusCubeVerts, lotusCubeVertCount, 0);
+    }; lotusSetMesh(e, lotusCubeVerts, lotusCubeVertCount, 0, 0);
 }
 
 void lotusPyramidMesh(LotusEntity* e) {
@@ -278,7 +280,7 @@ void lotusPyramidMesh(LotusEntity* e) {
         -0.5f,  0.0f, -0.5f   // Bottom left of base
     };
 
-    lotusSetMesh(e, lotusPyramidVerts, 18, 0);
+    lotusSetMesh(e, lotusPyramidVerts, 18, 0, 0);
 }
 
 void lotusCylinderMesh(LotusEntity* e) {
@@ -354,7 +356,7 @@ void lotusCylinderMesh(LotusEntity* e) {
         lotusCylinderVerts[idx++] = radius * cosf(nextTheta);  // x (top right)
         lotusCylinderVerts[idx++] = height / 2;                // y (top)
         lotusCylinderVerts[idx++] = radius * sinf(nextTheta);  // z
-    } lotusSetMesh(e, lotusCylinderVerts, lotusCylinderVertCount, 0);
+    } lotusSetMesh(e, lotusCylinderVerts, lotusCylinderVertCount, 0, 0);
 }
 
 void lotusSphereMesh(LotusEntity* e) {
@@ -418,6 +420,6 @@ void lotusSphereMesh(LotusEntity* e) {
             lotusSphereVerts[idx++] = z4;
         }
     }
-    lotusSetMesh(e, lotusSphereVerts, sphereVertCount, 0);
+    lotusSetMesh(e, lotusSphereVerts, sphereVertCount, 0, 0);
 }
 
