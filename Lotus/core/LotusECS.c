@@ -245,6 +245,23 @@ void lotusSetMesh(LotusEntity* e, float* verts, unsigned short nverts, unsigned 
     lotusSetCID(e, LotusMeshCID);
 }
 
+void lotusPushMesh(LotusEntity* e, unsigned short nverts, unsigned short vsize, unsigned int vbo, unsigned int vao, void* verts) {
+    if (lotusQueryCID(e, LotusMeshCID) || e->EID > LOTUS_ENTITY_MAX || e->EID < 0) { return; }
+    _LOTUS_MESH._vsize[e->EID] = vsize;
+    _LOTUS_MESH._nverts[e->EID] = nverts;
+    _LOTUS_MESH._MID[e->EID] = _lotusHashMesh(verts, nverts);
+    
+    _LOTUS_MESH._verts[e->EID] = (float*)malloc(nverts*vsize*sizeof(float));
+    if (!_LOTUS_MESH._verts[e->EID]) {
+        _lotusLogError("Error Allocating Space For Mesh Component Vertex Array");
+        return;
+    } memcpy(_LOTUS_MESH._verts[e->EID], verts, nverts*vsize*sizeof(float));
+
+    _LOTUS_MESH._vbo[e->EID] = vbo;
+    _LOTUS_MESH._vao[e->EID] = vao;
+    lotusSetCID(e, LotusMeshCID);
+}
+
 LotusMesh_itf* lotusGetMesh(LotusEntity* e) {
     if (!lotusQueryCID(e, LotusMeshCID)) { return NULL; }
     LotusMesh_itf* m = (LotusMesh_itf*)malloc(sizeof(LotusMesh_itf));
@@ -264,11 +281,11 @@ LotusMesh_itf* lotusGetMesh(LotusEntity* e) {
         free(m);
         return NULL;
     }
-    m->MID = _LOTUS_MESH._MID[e->EID];
-    m->vbo = _LOTUS_MESH._vbo[e->EID];
-    m->vao = _LOTUS_MESH._vao[e->EID];
-    m->vsize = _LOTUS_MESH._vsize[e->EID];
-    m->nverts = _LOTUS_MESH._nverts[e->EID];
+    m->MID = &_LOTUS_MESH._MID[e->EID];
+    m->vbo = &_LOTUS_MESH._vbo[e->EID];
+    m->vao = &_LOTUS_MESH._vao[e->EID];
+    m->vsize = &_LOTUS_MESH._vsize[e->EID];
+    m->nverts = &_LOTUS_MESH._nverts[e->EID];
     return m;
 }
 

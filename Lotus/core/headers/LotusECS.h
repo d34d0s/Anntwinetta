@@ -43,11 +43,11 @@ typedef struct LotusEntity {
 // COMPONENT INTERFACES
 typedef struct LotusMesh_itf {
     float* verts;
-    unsigned int vbo;
-    unsigned int vao;
-    unsigned short MID;
-    unsigned short vsize;
-    unsigned short nverts;
+    unsigned int* vbo;
+    unsigned int* vao;
+    unsigned short* MID;
+    unsigned short* vsize;
+    unsigned short* nverts;
 } LotusMesh_itf;
 
 typedef struct LotusUniform_itf {
@@ -186,6 +186,8 @@ LOTUS_API LotusMesh_itf* lotusGetMesh(LotusEntity* e);
 // Set A Mesh Component To A Given Entity
 LOTUS_API void lotusSetMesh(LotusEntity* e, float* verts, unsigned short nverts, unsigned char vColor, unsigned char vTexture);
 
+// 'Push' Custom Mesh Component Data To The Lotus Mesh Internal Struct To A Given Entity
+LOTUS_API void lotusPushMesh(LotusEntity* e, unsigned short nverts, unsigned short vsize, unsigned int vbo, unsigned int vao, void* verts);
 
 // LOTUS MATERIAL API
 LOTUS_API void lotusRemMaterial(LotusEntity* e);

@@ -62,9 +62,9 @@ void _lotusPreProcessing(LotusRenderer* r) {
         }
 
         dc->type = LOTUS_DRAW_MONO;
-        dc->vao = mesh->vao;
-        dc->vbo = mesh->vbo;
-        dc->nverts = mesh->nverts;
+        dc->vao = *mesh->vao;
+        dc->vbo = *mesh->vbo;
+        dc->nverts = *mesh->nverts;
         dc->texture = (texture == NULL) ? NULL : texture;
         dc->material = (material == NULL) ? NULL : material;
     }

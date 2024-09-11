@@ -10,9 +10,17 @@ typedef struct LMvec2 {
     float x, y;
 } LMvec2;
 
+typedef struct LMvec2_i {
+    int x, y;
+} LMvec2_i;
+
 typedef struct LMvec3 {
     float x, y, z;
 } LMvec3;
+
+typedef struct LMvec3_i {
+    int x, y, z;
+} LMvec3_i;
 
 typedef struct LMvec4 {
     float x, y, z, w;
