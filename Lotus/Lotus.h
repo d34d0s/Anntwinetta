@@ -6,7 +6,6 @@
 #include "core/headers/LotusInput.h"
 #include "core/headers/LotusProc.h"
 #include "core/headers/LotusECS.h"
-#include "core/headers/LotusVX.h"
 #include "version.h"
 
 typedef struct Lotus {
