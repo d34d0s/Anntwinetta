@@ -65,7 +65,7 @@ void _lotusMakeUniform(LotusShader_itf* shader, unsigned char uindex, const char
         if (shader->uniforms[uindex].location == -1) {
             _lotusLogError("ERROR RETRIEVING UNIFORM LOCATION: RES[%d]", shader->uniforms[uindex].location); return;
         }
-    } else _lotusLogError("ERROR IN SHADER COMPILATION/LINKING: PROGRAM[%d]\n", shader->program); return;
+    } else _lotusLogError("ERROR IN SHADER UNIFORM RETRIEVAL: PROGRAM[%d]\n", shader->program); return;
 
 }
 
@@ -75,7 +75,7 @@ void _lotusSetUniformValue(LotusShader_itf* shader, unsigned char uindex, void* 
         LotusUniform_itf* uni = &shader->uniforms[uindex];
         if (uni->location != -1) {
             uni->value=uvalue;
-        } else _lotusLogError("ERROR IN SHADER COMPILATION/LINKING: PROGRAM[%d]\n", shader->program); return;
+        } else _lotusLogError("ERROR IN SHADER UNIFORM RETRIEVAL: PROGRAM[%d] | UNAME [%s]\n", shader->program, shader->uniforms[uindex].name); return;
     }
 }
 

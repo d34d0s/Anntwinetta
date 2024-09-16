@@ -10,21 +10,25 @@ typedef struct LMvec2 {
     float x, y;
 } LMvec2;
 
-typedef struct LMvec2_i {
-    int x, y;
-} LMvec2_i;
+typedef struct LMvec2_byte {
+    b8 x, y;
+} LMvec2_byte;
 
 typedef struct LMvec3 {
     float x, y, z;
 } LMvec3;
 
-typedef struct LMvec3_i {
-    int x, y, z;
-} LMvec3_i;
+typedef struct LMvec3_byte {
+    b8 x, y, z;
+} LMvec3_byte;
 
 typedef struct LMvec4 {
     float x, y, z, w;
 } LMvec4;
+
+typedef struct LMvec4_byte {
+    b8 x, y, z, w;
+} LMvec4_byte;
 
 typedef struct LMmat4{
     float m[16];
