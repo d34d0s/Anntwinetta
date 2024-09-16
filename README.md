@@ -6,9 +6,9 @@
 
 <h2 style="color:rgb(248,55,162)"> 🪷 About Lotus 🪷 </h2>
 
-Lotus Engine is built around both the OpenGL/WebGL, and SDL2 ecosystems, dynamically linking against GLFW, GLEW, and the SDL2 libraries as dependancies.
+Lotus Engine is built around both the OpenGL/WebGL, and SDL2 ecosystems, dynamically linking against GLFW, GLEW, and the SDL2 libraries as dependencies.
 
-##### [ a look at the engine's dependancies can be found over at Lotus/core/vendor ]
+##### [ a look at the engine's dependencies can be found over at Lotus/core/vendor ]
 
 </br>
 
