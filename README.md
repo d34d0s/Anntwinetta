@@ -8,7 +8,7 @@
 
 Lotus Engine is built around both the OpenGL/WebGL, and SDL2 ecosystems, linking against GLFW, GLEW, and the SDL2 libraries as dependencies.
 
-##### [ a look at the engine's dependencies can be found over at Lotus/core/vendor ]
+##### [ a look at the engine's dependencies can be found over at Lotus/engine/headers/core/vendor ]
 
 </br>
 
