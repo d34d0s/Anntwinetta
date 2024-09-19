@@ -1,4 +1,6 @@
-#include "lotus.h"
+#include "../headers/lotus.h"
+
+char* lotusGetVersion(void) { return LOTUS.version; }
 
 void lotusInit(void) {
     _lotusInitGLFW();

@@ -22,11 +22,11 @@
 #ifndef TINYCUBESEXT_H
 #define TINYCUBESEXT_H
 
-#include "../../../engine/headers/core/LotusECS.h"
-#include "../../../engine/headers/core/LotusMath.h"
-#include "../../../engine/headers/backend/LotusGL.h"
-#include "../../../engine/headers/core/lotus_types.h"
-#include "../../LotusMaterials/headers/LotusMaterials.h"
+#include "LotusMaterials.h"
+#include "../../engine/headers/core/LotusECS.h"
+#include "../../engine/headers/core/LotusMath.h"
+#include "../../engine/headers/backend/LotusGL.h"
+#include "../../engine/headers/core/lotus_types.h"
 
 #define voxel_t b8 // voxels are id's from 0-255
 

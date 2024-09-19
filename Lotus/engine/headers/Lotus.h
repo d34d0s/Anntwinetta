@@ -17,6 +17,8 @@ typedef struct Lotus {
 } Lotus;
 static Lotus LOTUS;
 
+LOTUS_API char* lotusGetVersion(void);
+
 // External Engine API
 LOTUS_API void lotusInit(void);
 LOTUS_API void lotusExit(void);

@@ -5,8 +5,8 @@
 #ifndef LOTUSSHAPESEXT_H
 #define LOTUSSHAPESEXT_H
 
-#include "../../../engine/headers/core/LotusECS.h"
-#include "../../../engine/headers/core/lotus_types.h"
+#include "../../engine/headers/core/LotusECS.h"
+#include "../../engine/headers/core/lotus_types.h"
 
 #define  LOTUS_VERTEX_MAX (1<<16)
 

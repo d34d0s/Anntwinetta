@@ -5,8 +5,8 @@
 #ifndef LOTUSMATERIALS_H
 #define LOTUSMATERIALS_H
 
-#include "../../../engine/headers/core/LotusECS.h"
-#include "../../../engine/headers/core/lotus_types.h"
+#include "../../engine/headers/core/LotusECS.h"
+#include "../../engine/headers/core/lotus_types.h"
 
 static const char *vsrcMVP = "#version 330 core\n"
     "layout(location = 0) in vec3 vLocation;\n"
