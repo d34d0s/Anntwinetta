@@ -7,7 +7,7 @@
 
 #### Relevant Links
 [ 
-  [Official Wiki](https://github.com/F4R4W4Y/Lotus/wiki) | [API Documentation](https://github.com/F4R4W4Y/Lotus/wiki/Lotus-API-Docs) | [Lotus FAQ](https://github.com/F4R4W4Y/Lotus/wiki/Lotus-FAQ) | [Official Reddit](https://www.reddit.com/r/LotusEngine/)
+  [Official Wiki](https://github.com/F4R4W4Y/Lotus/wiki) | [API Documentation](https://github.com/F4R4W4Y/Lotus/wiki/Lotus-API-Docs) | [Lotus FAQ](https://github.com/F4R4W4Y/Lotus/wiki/Lotus-FAQ) | [Official Reddit](https://www.reddit.com/r/LotusEngine/) | [Lotus Discussions](https://github.com/F4R4W4Y/Lotus/discussions)
 ]
 </br>
 
