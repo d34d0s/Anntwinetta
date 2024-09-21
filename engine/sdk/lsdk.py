@@ -90,6 +90,8 @@ def lotus_build_windows() -> None:
     engine_dir:str=f'{lotus_dir}\\engine'
     build_dir:str=f'{lotus_dir}\\build\\'
     vendor_dir:str=f'{engine_dir}\\vendor'
+    if os.path.exists(f'{build_dir}\\bin\\Lotus.dll'): os.system(f'del {build_dir}\\bin\\Lotus.dll /Q')
+
     if not os.path.exists(build_dir):
         os.mkdir(build_dir)
     if not os.path.exists(f'{build_dir}\\bin'):
@@ -98,13 +100,14 @@ def lotus_build_windows() -> None:
     for r, _, f in os.walk(engine_dir):
         for cfile in f:
             if cfile.endswith('.c'): c_files.append([cfile, os.path.join(r, cfile)])
-    [ os.system(f'gcc -D_LOTUSWINDOWS_ -D_LOTUSEXPORT_ -c {fp} -o {build_dir}\\bin\\{f.removesuffix('.c')}.o') for f, fp in c_files ]
+    [ os.system(f'gcc -D_LOTUS_GL_ -D_LOTUS_WINDOWS_ -D_LOTUS_EXPORT_ -c {fp} -o {build_dir}\\bin\\{f.removesuffix('.c')}.o') for f, fp in c_files ]
 
     for r, _, f in os.walk(f'{build_dir}\\bin'):
         for ofile in f:
             o_files += f'{build_dir}\\bin\\{ofile}'+' '
-    os.system(f'gcc -shared {o_files} -o {build_dir}\\bin\\Lotus.dll -I{lotus_dir}\\engine -I{vendor_dir} -L{vendor_dir}\\bin -lSDL2 -luser32')
+    os.system(f'gcc -shared {o_files} -o {build_dir}\\bin\\Lotus.dll -I{lotus_dir}\\engine -I{vendor_dir} -L{vendor_dir}\\bin -lSDL2 -lopengl32 -luser32')
     os.system(f'del {build_dir}\\bin\\*.o /Q')
+
     if lotus_load_dll(): print(f'\nNative DLL Build Successful')
 
 def lotus_build_webassembly() -> None:
@@ -134,15 +137,20 @@ def lotus_build_webassembly() -> None:
 
     emcc_command = (
         f'emcc {cstr} '
-        f'-D_LOTUSWASM_ '  # Define for WASM
-        f'-o {build_dir}\\wasm\\lotus.js '  # Output WASM
-        f'-s "EXPORT_NAME=\'LotusModule\'" '  # Name the module "LotusModule"
-        f'-s EXPORTED_RUNTIME_METHODS="[\'UTF8ToString\']" '  # Expose UTF8ToString
-        f'--no-entry '  # Indicate there's no main function
+        f'-g '  # embed debug symbols into .wasm
+        f'-lm ' # math lib
+        f'-D_LOTUS_GL_ '
+        f'-D_LOTUS_WASM_ '
+        f'-o {build_dir}\\wasm\\lotus.js '
+        f'-s USE_SDL=2 '
+        f'-s USE_WEBGL2=1 '  # enable WebGL 2 support
+        f'-s FULL_ES3=1 '    # full WebGL ES3 support
+        f'-s MAX_WEBGL_VERSION=2 '  # ensure WebGL 2 compatibility
+        # f'--preload-file {asset_dir} '  # preload some assets
+        f'--no-entry '
     ); os.system(emcc_command)
 
     print(f'\nNative Web Build Successful')
-    # if lotus_load_dll(): print(f'\nNative Web Build Successful')
 
 def lotus_build_project() -> None: raise NotImplementedError
 
