@@ -26,6 +26,8 @@ char lotus_enable_vsync_gl(void) {
 }
 
 void lotus_destroy_window_gl(lotus_window_gl* w) {
+    SDL_GL_DeleteContext(&w->_gl_ctx);
+    SDL_DestroyRenderer(w->_sdl_ren);
     SDL_DestroyWindow(w->_sdl_win);
     free(w->title);
     free(w);

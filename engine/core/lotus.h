@@ -14,7 +14,6 @@
     #include "../backend/VK/lotus_vk.h"
 #endif
 
-
 typedef struct _Lotus_Internal {
     char ver[100];
     #ifdef _LOTUS_GL_
@@ -29,3 +28,8 @@ static _Lotus_Internal LOTUS;
 LOTUS_API void lotus_init(void);
 LOTUS_API void lotus_exit(void);
 LOTUS_API char* lotus_get_ver(void);
+
+#ifdef _LOTUS_GL_
+    LOTUS_API void render_test_gl();
+
+#endif

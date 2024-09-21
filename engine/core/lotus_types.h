@@ -1,8 +1,15 @@
 #pragma once
 
-#include "../vendor/SDL2/SDL.h"
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stddef.h>
+#include <stdarg.h>
+#include <stdint.h>
+#include <stdbool.h>
 
-#define LOTUS_KEEPALIVE __attribute__((used))
+#define SDL_MAIN_HANDLED
+#include "../vendor/SDL2/SDL.h"
 
 #ifdef _LOTUS_WINDOWS_
     #ifdef _LOTUS_EXPORT_
@@ -13,6 +20,7 @@
 #endif
 
 #ifdef _LOTUS_WASM_
+    #include "../vendor/emscripten/emscripten.h"
     #define LOTUS_API __attribute__((used))
 #endif
 
@@ -20,13 +28,6 @@
     #define LOTUS_API
 #endif
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stddef.h>
-#include <stdarg.h>
-#include <stdint.h>
-#include <stdbool.h>
 typedef unsigned long EID_TYPE;
 typedef unsigned char NID_TYPE;
 typedef unsigned short CID_TYPE;
@@ -96,4 +97,3 @@ static void _lotusLog(const char *message, ...)
 
 #define _lotusLogFatal(MESSAGE, ...) \
     _lotusLog("|FATAL| :: %s() :: " MESSAGE, __FUNCTION__, ##__VA_ARGS__)
-

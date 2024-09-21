@@ -22,9 +22,27 @@ void lotus_init(void) {
         sprintf(win_title, "Lotus Engine | %s", LOTUS.ver);
         lotus_create_window_gl(&LOTUS.window, (lm_vec2_i){800, 600}, win_title);
         lotus_init_gl(&LOTUS.window);
+        glClearColor(0.4, 0.3, 0.7, 1.0);
     #endif
 }
 
 void lotus_exit(void) {
     _lotusLogExit("Lotus %s", LOTUS.ver);
+    #ifdef _LOTUS_GL_
+        lotus_destroy_window_gl(&LOTUS.window);
+    #endif
+}
+
+void render_test_gl() {
+    //Clear color buffer
+    glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT );
+    
+    //Render quad
+    // glBegin( GL_QUADS );
+    //     glVertex2f( -0.5f, -0.5f );
+    //     glVertex2f( 0.5f, -0.5f );
+    //     glVertex2f( 0.5f, 0.5f );
+    //     glVertex2f( -0.5f, 0.5f );
+    // glEnd();
+    SDL_GL_SwapWindow(LOTUS.window._sdl_win);
 }

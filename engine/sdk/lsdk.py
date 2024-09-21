@@ -1,6 +1,8 @@
 import os, sys, json, ctypes, shutil, platform, zipfile, argparse
 
-# TODO: Implement a simple logger for the SDK!!! (consider rich?)
+# TODO:
+# Implement a simple versioning system!!!
+# Implement a simple logger for the SDK!!! (consider rich?)
 
 lotus_version:str='1.0.2024-alpha'
 lotus_repo_dir:str='https://github.com/F4R4W4Y/Lotus'
@@ -13,26 +15,12 @@ def lotus_load_dll() -> bool:
     if lotus_dir and os.path.exists(f'{lotus_dir}\\build\\bin'):
         lotus_dir='\\'.join(lotus_dir.split('/'))
         try:
+            sdl2lib = ctypes.CDLL(f'{lotus_dir}\\engine\\vendor\\bin\\SDL2.dll')
             lotuslib = ctypes.CDLL(f'{lotus_dir}\\build\\bin\\Lotus.dll')
         except (FileNotFoundError) as err: print(f'[ WARNING ] Lotus Engine DLL Not Yet Built!', err); return False
-        
-        lotus_init=lotuslib.lotus_init
-        lotus_init.argtypes=None
-        lotus_init.restype=None
-        
-        lotus_exit=lotuslib.lotus_exit
-        lotus_exit.argtypes=None
-        lotus_exit.restype=None
-        
-        lotus_get_ver=lotuslib.lotus_get_ver
-        lotus_get_ver.argtypes=None
-        lotus_get_ver.restype=ctypes.c_char_p
-
-        lotus_init()
-        print(lotus_get_ver())
-        lotus_exit()
         return True
     else: print('Error Installing Environment Variables or Missing Engine Binaries!'); return False
+
 
 """
 Installation/Update Systems
@@ -88,7 +76,7 @@ def lotus_build_windows() -> None:
     lotus_dir:str=os.environ.get('LOTUS_DIR', None); lotus_dir='\\'.join(lotus_dir.split('/'))
 
     engine_dir:str=f'{lotus_dir}\\engine'
-    build_dir:str=f'{lotus_dir}\\build\\'
+    build_dir:str=f'{lotus_dir}\\build'
     vendor_dir:str=f'{engine_dir}\\vendor'
     if os.path.exists(f'{build_dir}\\bin\\Lotus.dll'): os.system(f'del {build_dir}\\bin\\Lotus.dll /Q')
 
@@ -106,7 +94,9 @@ def lotus_build_windows() -> None:
         for ofile in f:
             o_files += f'{build_dir}\\bin\\{ofile}'+' '
     os.system(f'gcc -shared {o_files} -o {build_dir}\\bin\\Lotus.dll -I{lotus_dir}\\engine -I{vendor_dir} -L{vendor_dir}\\bin -lSDL2 -lopengl32 -luser32')
+    os.system(f'ar rcs {build_dir}\\lib\\libLotus.a {o_files}')
     os.system(f'del {build_dir}\\bin\\*.o /Q')
+    
 
     if lotus_load_dll(): print(f'\nNative DLL Build Successful')
 
@@ -118,7 +108,7 @@ def lotus_build_webassembly() -> None:
     lotus_dir:str=os.environ.get('LOTUS_DIR', None); lotus_dir='\\'.join(lotus_dir.split('/'))
 
     engine_dir:str=f'{lotus_dir}\\engine'
-    build_dir:str=f'{lotus_dir}\\build\\'
+    build_dir:str=f'{lotus_dir}\\build'
     vendor_dir:str=f'{engine_dir}\\vendor'
     if not os.path.exists(build_dir):
         os.mkdir(build_dir)
@@ -141,22 +131,93 @@ def lotus_build_webassembly() -> None:
         f'-lm ' # math lib
         f'-D_LOTUS_GL_ '
         f'-D_LOTUS_WASM_ '
-        f'-o {build_dir}\\wasm\\lotus.js '
+        f'-o {build_dir}\\wasm\\lotus.wasm '
         f'-s USE_SDL=2 '
         f'-s USE_WEBGL2=1 '  # enable WebGL 2 support
         f'-s FULL_ES3=1 '    # full WebGL ES3 support
         f'-s MAX_WEBGL_VERSION=2 '  # ensure WebGL 2 compatibility
         # f'--preload-file {asset_dir} '  # preload some assets
         f'--no-entry '
+        f'-s EXPORTED_FUNCTIONS="["_lotus_init", "_render_test_gl", "_lotus_exit"]"'
     ); os.system(emcc_command)
 
     print(f'\nNative Web Build Successful')
 
-def lotus_build_project() -> None: raise NotImplementedError
+def lotus_build_project_windows() -> None:
+    if lotus_load_dll(): print(f'\nBuilding Project Windows Native')
+
+    lotus_dir:str=os.environ.get('LOTUS_DIR', None); lotus_dir='\\'.join(lotus_dir.split('/'))
+
+    engine_dir:str=f'{lotus_dir}\\engine'
+    vendor_dir:str=f'{engine_dir}\\vendor'
+    lotus_build_dir:str=f'{lotus_dir}\\build'
+    
+    build_dir:str=query_stdin('Enter A Path To A Source File/Directory')
+    build_dir=build_dir.replace('/', '\\')
+    if not os.path.exists(build_dir): os.mkdir(build_dir)
+    if not os.path.exists(f'{build_dir}\\build'): os.mkdir(f'{build_dir}\\build')
+
+    c_file_str:str=''
+    for r, d, f in os.walk(build_dir):
+        for c_file in f:
+            if not c_file.endswith('.c'): continue
+            c_file_str += os.path.join(r, c_file)
+
+    os.system( f' gcc -D_LOTUS_GL_ {c_file_str} -I{engine_dir} -I{vendor_dir} -L{lotus_build_dir}\\bin -L{vendor_dir}\\bin -lLotus -lSDL2 -lopengl32 -o {build_dir}\\build\\lotus_project ' )
+    os.system( f'xcopy {vendor_dir}\\bin\\ {build_dir}\\build /s /q' )
+    os.system( f'xcopy {lotus_build_dir}\\bin\\ {build_dir}\\build /s /q' )
+
+    print(f'\nWindows Native Project Built Successfully')
+
+def lotus_build_project_webassembly() -> None:
+    if lotus_load_dll(): print(f'\nBuilding Project Web Native')
+
+    lotus_dir:str=os.environ.get('LOTUS_DIR', None); lotus_dir='\\'.join(lotus_dir.split('/'))
+
+    engine_dir:str=f'{lotus_dir}\\engine'
+    vendor_dir:str=f'{engine_dir}\\vendor'
+    lotus_build_dir:str=f'{lotus_dir}\\build'
+    
+    build_dir:str=query_stdin('Enter A Path To A Source File/Directory')
+    build_dir=build_dir.replace('/', '\\')
+    if not os.path.exists(build_dir): os.mkdir(build_dir)
+    if not os.path.exists(f'{build_dir}\\build'): os.mkdir(f'{build_dir}\\build')
+
+    lotus_c_file_str:str=''
+    for r, d, f in os.walk(engine_dir):
+        for c_file in f:
+            if not c_file.endswith('.c'): continue
+            lotus_c_file_str += os.path.join(r, c_file) + ' '
+    
+    c_file_str:str=''
+    for r, d, f in os.walk(build_dir):
+        for c_file in f:
+            if not c_file.endswith('.c'): continue
+            c_file_str += os.path.join(r, c_file)
+
+    emcc_command = (
+        f'emcc {c_file_str} {lotus_c_file_str} '
+        f'-D_LOTUS_GL_ '
+        f'-D_LOTUS_WASM_ '
+        f'-s USE_SDL=2 '
+        f'-s USE_WEBGL2=1 '                                 # enable WebGL 2 support
+        f'-s FULL_ES3=1 '                                   # full WebGL ES3 support
+        f'-s MAX_WEBGL_VERSION=2 '                          # ensure WebGL 2 compatibility
+        f'-s NO_EXIT_RUNTIME=1 '                            # runtime doesn't exit after main
+        f'-o {build_dir}\\build\\lotus_project.js '
+        f'--preload-file {lotus_build_dir}\\wasm\\lotus.wasm '    # Preload the Lotus engine wasm.
+        f'--shell-file {lotus_build_dir}\\wasm\\lotus_shell.html '
+    ); os.system(emcc_command); os.system(f'xcopy {lotus_build_dir}\\wasm\\lotus_shell.html {build_dir}\\build')
+
+    print(f'\nWeb Native Project Built Successfully')
 
 def lotus_build(args:argparse.Namespace) -> None:
-    if args.win: lotus_build_windows()
-    elif args.web: lotus_build_webassembly()
+    if args.win:
+        if 'lotus' in args.win: lotus_build_windows()
+        elif 'proj' in args.win: lotus_build_project_windows()
+    elif args.web:
+        if 'lotus' in args.web: lotus_build_webassembly()
+        elif 'proj' in args.web: lotus_build_project_webassembly()
 
 
 """
@@ -174,8 +235,8 @@ def main() -> None:
     install_cmd.add_argument('-dev', required=False, help='Install a specific version of Lotus\' devkits')
     
     build_cmd=subparsers.add_parser(name='build', help='Build Lotus Engine or your own project')
-    build_cmd.add_argument('-win', nargs=1, choices=['dll'], required=False, help='Target Windows for compilation')
-    build_cmd.add_argument('-web', nargs=1, choices=['wasm'], required=False, help='Target Windows for compilation')
+    build_cmd.add_argument('-win', nargs=1, choices=['lotus', 'proj'], required=False, help='Target Windows for compilation')
+    build_cmd.add_argument('-web', nargs=1, choices=['lotus', 'proj'], required=False, help='Target Windows for compilation')
 
     args=parser.parse_args()
 
