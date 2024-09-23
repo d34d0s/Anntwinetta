@@ -1,5 +1,7 @@
-#pragma once
+#ifndef LOTUSTYPES_H
+#define LOTUSTYPES_H
 
+#include <math.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -10,6 +12,13 @@
 
 #define SDL_MAIN_HANDLED
 #include "../vendor/SDL2/SDL.h"
+
+typedef enum error_t {
+    ERR_NONE=0,
+    ERR_TYPE,
+    ERR_MALLOC,
+    ERR_TYPES,
+} error_t;
 
 #ifdef _LOTUS_WINDOWS_
     #ifdef _LOTUS_EXPORT_
@@ -37,10 +46,10 @@ typedef unsigned short      b16;
 typedef unsigned long       b32;
 typedef unsigned long long  b64;
 
-#define BYTE1_MAX ((1UL << 4) - 1)    // 4bit  max (1 byte: 15)
-#define BYTE2_MAX ((1UL << 8) - 1)    // 8bit  max (2 bytes: 255)
-#define BYTE4_MAX ((1UL << 16) - 1)   // 16bit max (4 bytes: 65,535)
-#define BYTE8_MAX ((1ULL << 32) - 1)  // 32bit max (8 bytes: 4,294,967,295)
+#define BYTE1_MAX (0b1 << 4)      // 4bit  max (half byte: 15)
+#define BYTE2_MAX (0b1 << 8)      // 8bit  max (1 bytes: 255)
+#define BYTE4_MAX (0b1 << 16)     // 16bit max (2 bytes: 65,535)
+#define BYTE8_MAX (1ULL << 32)    // 32bit max (4 bytes: 4,294,967,295)
 
 // Helper macro for checking if a value is a number or not
 #define lotusIsNAN(V) ((V) != (V))
@@ -97,3 +106,6 @@ static void _lotusLog(const char *message, ...)
 
 #define _lotusLogFatal(MESSAGE, ...) \
     _lotusLog("|FATAL| :: %s() :: " MESSAGE, __FUNCTION__, ##__VA_ARGS__)
+
+
+#endif

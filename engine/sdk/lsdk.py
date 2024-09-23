@@ -125,21 +125,17 @@ def lotus_build_webassembly() -> None:
     for arr in c_files:
         cstr += f'{arr[1]} '
 
+    o_files:str=''
+    for f, p in c_files:
+        o_file = f'{f.removesuffix('.c')}.o'
+        o_files+=f'{build_dir}\\wasm\\{o_file} '
+        emcc_command = (
+            f'emcc --no-entry -g -c {p} -D_LOTUS_GL_ -D_LOTUS_WASM_ -o {build_dir}\\wasm\\{o_file}'
+        ); os.system(emcc_command)
+
     emcc_command = (
-        f'emcc {cstr} '
-        f'-g '  # embed debug symbols into .wasm
-        f'-lm ' # math lib
-        f'-D_LOTUS_GL_ '
-        f'-D_LOTUS_WASM_ '
-        f'-o {build_dir}\\wasm\\lotus.wasm '
-        f'-s USE_SDL=2 '
-        f'-s USE_WEBGL2=1 '  # enable WebGL 2 support
-        f'-s FULL_ES3=1 '    # full WebGL ES3 support
-        f'-s MAX_WEBGL_VERSION=2 '  # ensure WebGL 2 compatibility
-        # f'--preload-file {asset_dir} '  # preload some assets
-        f'--no-entry '
-        f'-s EXPORTED_FUNCTIONS="["_lotus_init", "_render_test_gl", "_lotus_exit"]"'
-    ); os.system(emcc_command)
+        f'emar rcs {build_dir}\\lib\\libLotusWeb.a {o_files}'
+    ); os.system(emcc_command); os.system(f'del {build_dir}\\wasm\\*.o /Q')
 
     print(f'\nNative Web Build Successful')
 
@@ -196,19 +192,24 @@ def lotus_build_project_webassembly() -> None:
             c_file_str += os.path.join(r, c_file)
 
     emcc_command = (
-        f'emcc {c_file_str} {lotus_c_file_str} '
+        f'emcc '
+        f'-Os '
+        f'-Wall '
         f'-D_LOTUS_GL_ '
         f'-D_LOTUS_WASM_ '
+        f'{c_file_str} '
+        f'-o {build_dir}\\build\\lotus_game.html '
         f'-s USE_SDL=2 '
-        f'-s USE_WEBGL2=1 '                                 # enable WebGL 2 support
-        f'-s FULL_ES3=1 '                                   # full WebGL ES3 support
-        f'-s MAX_WEBGL_VERSION=2 '                          # ensure WebGL 2 compatibility
-        f'-s NO_EXIT_RUNTIME=1 '                            # runtime doesn't exit after main
-        f'-o {build_dir}\\build\\lotus_project.js '
-        f'--preload-file {lotus_build_dir}\\wasm\\lotus.wasm '    # Preload the Lotus engine wasm.
-        f'--shell-file {lotus_build_dir}\\wasm\\lotus_shell.html '
-    ); os.system(emcc_command); os.system(f'xcopy {lotus_build_dir}\\wasm\\lotus_shell.html {build_dir}\\build')
-
+        f'-s FULL_ES3=1 '
+        f'-s USE_WEBGL2=1 '
+        f'-s NO_EXIT_RUNTIME=1 '
+        f'-s MAX_WEBGL_VERSION=2 '
+        f'-I{engine_dir}\\ '
+        f'-L{lotus_build_dir}\\lib '
+        f'{lotus_build_dir}\\lib\\libLotusWeb.a '
+        f'--shell-file {lotus_build_dir}\\wasm\\shell.html '
+    ); os.system(emcc_command);
+    
     print(f'\nWeb Native Project Built Successfully')
 
 def lotus_build(args:argparse.Namespace) -> None:

@@ -1,7 +1,4 @@
-#include <stdio.h>
-
 #include "lotus.h"
-#include "version.h"
 
 char* lotus_get_ver(void) { return LOTUS.ver; }
 

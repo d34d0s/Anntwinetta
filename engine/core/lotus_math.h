@@ -1,7 +1,6 @@
 #ifndef LOTUSMATH_H
 #define LOTUSMATH_H
 
-#include <math.h>
 #include "lotus_types.h"
 
 #define LM_PI       3.14159265358979323846   // pi
