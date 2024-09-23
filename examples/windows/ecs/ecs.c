@@ -2,7 +2,6 @@
 
 void main() {
     lotus_init();
-    printf("INIT OK\n");
     
     SDL_Event event;
     bool quit = false;
