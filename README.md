@@ -8,7 +8,7 @@
 #### Relevant Links
 [  [Official Wiki](https://github.com/F4R4W4Y/Lotus/wiki) | [API Documentation](https://github.com/F4R4W4Y/Lotus/wiki/Lotus-API-Docs) | [Lotus Examples](https://github.com/F4R4W4Y/Lotus/tree/refactor_01/examples) ]
   
-[  [Official Reddit](https://www.reddit.com/r/LotusEngine/) | [Lotus Discussions](https://github.com/F4R4W4Y/Lotus/discussions) [Lotus FAQ](https://github.com/F4R4W4Y/Lotus/wiki/Lotus-FAQ) ]
+[  [Official Reddit](https://www.reddit.com/r/LotusEngine/) | [Lotus Discussions](https://github.com/F4R4W4Y/Lotus/discussions) | [Lotus FAQ](https://github.com/F4R4W4Y/Lotus/wiki/Lotus-FAQ) ]
 </br>
 
 <h2> 🪷 Lotus' Contributors 🪷 </h2>
