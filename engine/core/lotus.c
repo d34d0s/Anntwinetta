@@ -1,4 +1,4 @@
-#include "lotus.h"
+#include "../include/lotus.h"
 
 char* lotus_get_ver(void) { return LOTUS.ver; }
 

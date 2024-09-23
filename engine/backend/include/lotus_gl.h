@@ -1,5 +1,5 @@
-#include "../../core/lotus_math.h"
-#include "../../core/lotus_types.h"
+#include "../../include/lotus_math.h"
+#include "../../include/lotus_types.h"
 #include "../../vendor/SDL2/SDL_opengl.h"
 
 typedef struct lotus_window_gl {

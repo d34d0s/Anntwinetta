@@ -1,36 +1,15 @@
-#include "../../../engine/core/lotus.h"
-
-typedef struct entity_t {
-    int eid;
-    int cid_field;
-} entity_t;
-
-typedef enum comps {
-    transform_comp=0b0,
-    material_comp=0b10,
-    n_comps
-} comps;
+#include "../../../engine/include/lotus.h"
 
 typedef struct d_array {
     int c;
     void* arr;
 } d_array;
 
-
-bool has_comp(entity_t* e, unsigned int cid) {
-    if (e->eid < 0 || e->eid > BYTE8_MAX) return 0;
-    return e->cid_field & (0b1 << cid);
-}
-
-void set_comp(entity_t* e, unsigned int cid) {
-    if (e->eid < 0 || e->eid > BYTE8_MAX) return;
-    e->cid_field ^= 0b1 << cid;
-}
-
-void rem_comp(entity_t* e, unsigned int cid) {
-    if (e->eid < 0 || e->eid > BYTE8_MAX) return;
-    e->cid_field &= ~(0b1 << cid);
-}
+typedef enum comps {
+    transform_comp=0b0,
+    material_comp=0b10,
+    n_comps
+} comps;
 
 void main() {
     lotus_init();

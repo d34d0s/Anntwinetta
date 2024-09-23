@@ -37,7 +37,7 @@ LOTUS_API seq_t* new_seq(int count, ...);
 #define proc_inplace(d, m, f)               \
     proc_t* _proc_ = new_proc(d, m, f);     \
     if (_proc_) {                           \
-        if(_proc_->main(_proc_->data)) {   \
+        if(_proc_->main(_proc_->data)) {    \
             _proc_->fallback(_proc_->data); \
         } del_proc(_proc_);                 \
     }
@@ -45,7 +45,7 @@ LOTUS_API seq_t* new_seq(int count, ...);
 #define seq_inplace(c, ...)\
     seq_t* _seq_ = new_seq(c, __VA_ARGS__);             \
     if (_seq_) {                                        \
-        if(_seq_->proc_->main(_seq_->proc_->data)) {   \
+        if(_seq_->proc_->main(_seq_->proc_->data)) {    \
             _seq_->proc_->fallback(_seq_->proc_->data); \
         } del_proc(_proc_);                             \
     }

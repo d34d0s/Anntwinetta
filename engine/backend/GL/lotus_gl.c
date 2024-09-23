@@ -1,4 +1,4 @@
-#include "lotus_gl.h"
+#include "../include/lotus_gl.h"
 
 char lotus_create_window_gl(lotus_window_gl* w, lm_vec2_i size, char* title) {
     w->is_open=0; w->size=size; w->title=title;

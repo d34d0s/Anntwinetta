@@ -1,4 +1,4 @@
-#include "lotus_math.h"
+#include "../include/lotus_math.h"
 
 float lmRadians(float deg) { return deg * LM_PI/180.0; }
 

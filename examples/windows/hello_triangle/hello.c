@@ -1,4 +1,4 @@
-#include "../../../engine/core/lotus.h"
+#include "../../../engine/include/lotus.h"
 
 int main(int argc, char* argv[]) {
     lotus_init();

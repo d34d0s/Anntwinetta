@@ -1,4 +1,4 @@
-#include "lotus_proc.h"
+#include "../include/lotus_proc.h"
 
 /* DEFAULT CALLBACKS */
 bool default_seq_main(void* v) {
