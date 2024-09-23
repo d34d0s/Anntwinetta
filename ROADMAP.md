@@ -2,8 +2,8 @@
 
 ### **Core Engine Development**
 - **Platform Layer Abstraction**  
-  - [ ] Compile for Windows (Native OpenGL)  
-  - [ ] Compile for Web (Emscripten + WebGL2)
+  - [✔️] Compile for Windows (Native OpenGL)  
+  - [✔️] Compile for Web (Emscripten + WebGL2)
 
 - **Graphics API Implementations**  
   - [ ] OpenGL API (Re)Implementation  
@@ -33,7 +33,7 @@
   - [ ] Internal modules for engine feature testing
 
 - **Lotus Example Modules**  
-  - [ ] Example mods/extensions to showcase engine capabilities
+  - [✔️] Example mods/extensions to showcase engine capabilities
 
 ---
 

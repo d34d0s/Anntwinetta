@@ -1,31 +1,19 @@
 #include "../../../engine/include/lotus.h"
 
-typedef struct d_array {
-    int c;
-    void* arr;
-} d_array;
-
-typedef enum comps {
-    transform_comp=0b0,
-    material_comp=0b10,
-    n_comps
-} comps;
-
 void main() {
     lotus_init();
+    printf("INIT OK\n");
+    
+    SDL_Event event;
+    bool quit = false;
 
-    entity_t e = {0, 0};
-    printf("entity struct size = %d\n", sizeof(e));
+    lotus_entity_t e  = {10, 0};
 
-    set_comp(&e, transform_comp);
-    set_comp(&e, material_comp);
-
-    printf("has transform %d\n", has_comp(&e, transform_comp));
-
-    rem_comp(&e, transform_comp);
-
-    printf("has transform %d\n", has_comp(&e, transform_comp));
-
-    lotus_exit();
+    while(!quit) {
+        while( SDL_PollEvent( &event ) != 0 ) {
+            if( event.type == SDL_QUIT ) { quit = true; }
+        }
+        lotus_render((lotus_draw_call){ .mode=DRAW_TRIANGLES });
+    } lotus_exit();
 }
 

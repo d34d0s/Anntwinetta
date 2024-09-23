@@ -52,31 +52,31 @@ typedef unsigned long long  b64;
 #define BYTE8_MAX (1ULL << 32)    // 32bit max (4 bytes: 4,294,967,295)
 
 // Helper macro for checking if a value is a number or not
-#define lotusIsNAN(V) ((V) != (V))
+#define lotus_is_nan(V) ((V) != (V))
 
 // Helpful macro for casting one type to another
-#define lotusCast_t(A, B) ((A *)(B))
+#define lotus_cast_t(A, B) ((A *)(B))
 
 // Helpful macro for turning any given type into a const char* of itself
-#define lotusToStr(TYPE) ((const char *)#TYPE)
+#define lotus_to_str(TYPE) ((const char *)#TYPE)
 
 // Helper macro for quickly determining the size of an array
-#define lotusArraySize(__ARR) sizeof(__ARR) / sizeof(__ARR[0])
+#define lotus_array_size(__ARR) sizeof(__ARR) / sizeof(__ARR[0])
 
 // Helper macro for an in place for-range loop
-#define lotusForRange_i(__COUNT) for (uint32_t i = 0; i < __COUNT; ++i)
+#define lotus_for_range_i(__COUNT) for (uint32_t i = 0; i < __COUNT; ++i)
 
 // Another helper macro for an in place for-range loop
-#define lotusForRange_j(__COUNT) for (uint32_t j = 0; j < __COUNT; ++j)
+#define lotus_for_range_j(__COUNT) for (uint32_t j = 0; j < __COUNT; ++j)
 
-#define lotusMax(A, B) ((A) > (B) ? (A) : (B))
+#define lotus_max(A, B) ((A) > (B) ? (A) : (B))
 
-#define lotusMin(A, B) ((A) < (B) ? (A) : (B))
+#define lotus_min(A, B) ((A) < (B) ? (A) : (B))
 
-#define lotusClamp(V, MIN, MAX) ((V) > (MAX) ? (MAX) : (V) < (MIN) ? (MIN) \
+#define lotus_clamp(V, MIN, MAX) ((V) > (MAX) ? (MAX) : (V) < (MIN) ? (MIN) \
                                                                     : (V))
 
-static void _lotusLog(const char *message, ...)
+static void _lotus_log(const char *message, ...)
 {
     va_list args;
     va_start(args, message);
@@ -86,26 +86,26 @@ static void _lotusLog(const char *message, ...)
     va_end(args);
 }
 
-#define _lotusLogInit(MESSAGE, ...) \
-    _lotusLog("|INIT| :: %s", ##__VA_ARGS__)
+#define _lotus_log_init(MESSAGE, ...) \
+    _lotus_log("|INIT| :: %s", ##__VA_ARGS__)
 
-#define _lotusLogExit(MESSAGE, ...) \
-    _lotusLog("|EXIT| :: %s", ##__VA_ARGS__)
+#define _lotus_log_exit(MESSAGE, ...) \
+    _lotus_log("|EXIT| :: %s", ##__VA_ARGS__)
 
-#define _lotusLogInfo(MESSAGE, ...) \
-    _lotusLog("|INFO| :: %s() :: " MESSAGE, __FUNCTION__, ##__VA_ARGS__)
+#define _lotus_log_info(MESSAGE, ...) \
+    _lotus_log("|INFO| :: %s() :: " MESSAGE, __FUNCTION__, ##__VA_ARGS__)
 
-#define _lotusLogSuccess(MESSAGE, ...) \
-    _lotusLog("|SUCCESS| :: %s() :: " MESSAGE, __FUNCTION__, ##__VA_ARGS__)
+#define _lotus_log_success(MESSAGE, ...) \
+    _lotus_log("|SUCCESS| :: %s() :: " MESSAGE, __FUNCTION__, ##__VA_ARGS__)
 
-#define _lotusLogWarning(MESSAGE, ...) \
-    _lotusLog("|WARNING| :: %s() :: " MESSAGE, __FUNCTION__, ##__VA_ARGS__)
+#define _lotus_log_warning(MESSAGE, ...) \
+    _lotus_log("|WARNING| :: %s() :: " MESSAGE, __FUNCTION__, ##__VA_ARGS__)
 
-#define _lotusLogError(MESSAGE, ...) \
-    _lotusLog("|ERROR| :: %s() :: " MESSAGE, __FUNCTION__, ##__VA_ARGS__)
+#define _lotus_log_error(MESSAGE, ...) \
+    _lotus_log("|ERROR| :: %s() :: " MESSAGE, __FUNCTION__, ##__VA_ARGS__)
 
-#define _lotusLogFatal(MESSAGE, ...) \
-    _lotusLog("|FATAL| :: %s() :: " MESSAGE, __FUNCTION__, ##__VA_ARGS__)
+#define _lotus_log_fatal(MESSAGE, ...) \
+    _lotus_log("|FATAL| :: %s() :: " MESSAGE, __FUNCTION__, ##__VA_ARGS__)
 
 
 #endif
