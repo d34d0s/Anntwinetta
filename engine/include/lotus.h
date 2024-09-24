@@ -47,6 +47,7 @@ typedef struct _lotus_internal {
     } subsys;
     
     char ver[100];
+    lotus_event_t* event;
     lotus_proc_t* _proc_main;
 } _lotus_internal;
 static _lotus_internal LOTUS;
@@ -75,13 +76,10 @@ LOTUS_API char* lotus_get_ver(void);
 // set a function matching the type interface to run as the windows main procedure
 LOTUS_API void lotus_set_win_main(lotus_proc_main_ptr main);
 
+
 // public subsystem API
+LOTUS_API void lotus_events(void);
 LOTUS_API void lotus_render(lotus_draw_call dc);
-
-
-#ifdef _LOTUS_GL_
-    LOTUS_API void render_test_gl();
-#endif  // _LOTUS_GL_ LOTUS_API 
-
+LOTUS_API void lotus_update(void);
 
 #endif  // LOTUS_H

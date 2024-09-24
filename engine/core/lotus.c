@@ -1,4 +1,5 @@
 #include "../include/lotus.h"
+#include "../include/lotus_events.h"
 
 char* lotus_get_ver(void) { return LOTUS.ver; }
 
@@ -10,7 +11,7 @@ void lotus_init(void) {
     _lotus_log_info("CPU Count:       %d", SDL_GetCPUCount());
     _lotus_log_info("System RAM:      %d MB", SDL_GetSystemRAM());
     
-    if (SDL_Init(SDL_INIT_VIDEO)) {
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS)) {
         _lotus_log_fatal("Failed To Initialize SDL2 | %s", SDL_GetError());
     }
 
@@ -28,6 +29,7 @@ void lotus_init(void) {
         ); LOTUS.subsys.render_subsys.window = &LOTUS.window;
     #endif
     
+    LOTUS.event = lotus_make_event_structure();
     LOTUS.engine_state._win_quit = 0;
 }
 
@@ -48,6 +50,18 @@ void lotus_main(void) {
     #endif
 }
 
+void lotus_events(void) {
+    if (lotus_events_main(LOTUS.event)) {
+        lotus_events_fallback((void*)0);
+    }
+}
+
+void lotus_update(void) {
+    lotus_update_keyboard_state();
+    lotus_update_mouse_button_state();
+    if (LOTUS.event->type == lotus_quit_event) lotus_exit();
+}
+
 void lotus_render(lotus_draw_call dc) {
     dc.rsys = &LOTUS.subsys.render_subsys;
     if (LOTUS.subsys.render_subsys._proc->main(&dc)) {
@@ -56,6 +70,7 @@ void lotus_render(lotus_draw_call dc) {
 }
 
 void lotus_exit(void) {
+    // free event structure
     LOTUS.engine_state._win_quit = 1;
     _lotus_log_exit("Lotus %s", LOTUS.ver);
     #ifdef _LOTUS_GL_
