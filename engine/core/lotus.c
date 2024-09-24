@@ -27,13 +27,24 @@ void lotus_init(void) {
             &LOTUS.subsys.render_subsys
         ); LOTUS.subsys.render_subsys.window = &LOTUS.window;
     #endif
-
+    
+    LOTUS.engine_state._win_quit = 0;
 }
 
-void lotus_exit(void) {
-    _lotus_log_exit("Lotus %s", LOTUS.ver);
-    #ifdef _LOTUS_GL_
-        lotus_destroy_window_gl(&LOTUS.window);
+void lotus_set_win_main(lotus_proc_main_ptr main) {
+    #ifdef _LOTUS_WINDOWS_
+        LOTUS._proc_main = lotus_new_proc((void*)0, (lotus_proc_main_ptr)main, _lotus_fallback);
+        if (!LOTUS._proc_main) {
+            _lotus_log_error("unable to create main procedure!");
+        }
+    #endif
+}
+
+void lotus_main(void) {
+    #ifdef _LOTUS_WINDOWS_
+        while (!LOTUS.engine_state._win_quit) {
+            if (LOTUS._proc_main->main(LOTUS._proc_main->data)) LOTUS.engine_state._win_quit = 1;
+        }; LOTUS._proc_main->fallback(LOTUS._proc_main->data);
     #endif
 }
 
@@ -43,3 +54,17 @@ void lotus_render(lotus_draw_call dc) {
         LOTUS.subsys.render_subsys._proc->fallback(&dc);
     }
 }
+
+void lotus_exit(void) {
+    LOTUS.engine_state._win_quit = 1;
+    _lotus_log_exit("Lotus %s", LOTUS.ver);
+    #ifdef _LOTUS_GL_
+        lotus_destroy_window_gl(&LOTUS.window);
+    #endif
+}
+
+
+void _lotus_fallback(void* v) {
+    _lotus_log_error("(O_O) main procedure fallback!");
+}
+

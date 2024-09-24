@@ -159,7 +159,7 @@ def lotus_build_project_windows() -> None:
             if not c_file.endswith('.c'): continue
             c_file_str += os.path.join(r, c_file)
 
-    os.system( f' gcc -D_LOTUS_GL_ {c_file_str} -I{engine_dir} -I{vendor_dir} -L{lotus_build_dir}\\bin -L{vendor_dir}\\bin -lLotus -lSDL2 -lopengl32 -o {build_dir}\\build\\lotus_project ' )
+    os.system( f' gcc -D_LOTUS_GL_ -D_LOTUS_WINDOWS_ {c_file_str} -I{engine_dir} -I{vendor_dir} -L{lotus_build_dir}\\bin -L{vendor_dir}\\bin -lLotus -lSDL2 -lopengl32 -o {build_dir}\\build\\lotus_project ' )
     os.system( f'xcopy {vendor_dir}\\bin\\ {build_dir}\\build /s /q' )
     os.system( f'xcopy {lotus_build_dir}\\bin\\ {build_dir}\\build /s /q' )
 
@@ -177,7 +177,7 @@ def lotus_build_project_webassembly() -> None:
     build_dir:str=query_stdin('Enter A Path To A Source File/Directory')
     build_dir=build_dir.replace('/', '\\')
     if not os.path.exists(build_dir): os.mkdir(build_dir)
-    if not os.path.exists(f'{build_dir}\\build'): os.mkdir(f'{build_dir}\\build')
+    if not os.path.exists(f'{build_dir}\\web_build'): os.mkdir(f'{build_dir}\\web_build')
 
     lotus_c_file_str:str=''
     for r, d, f in os.walk(engine_dir):
@@ -198,7 +198,7 @@ def lotus_build_project_webassembly() -> None:
         f'-D_LOTUS_GL_ '
         f'-D_LOTUS_WASM_ '
         f'{c_file_str} '
-        f'-o {build_dir}\\build\\lotus_game.html '
+        f'-o {build_dir}\\web_build\\lotus_game.html '
         f'-s USE_SDL=2 '
         f'-s FULL_ES3=1 '
         f'-s USE_WEBGL2=1 '

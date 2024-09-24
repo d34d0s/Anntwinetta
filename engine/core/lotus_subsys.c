@@ -24,5 +24,6 @@ bool lotus_init_render_subsys(int mode, lm_vec3 ccolor, lotus_render_subsys* rsy
     rsys->state.drawing = 0;
     rsys->state.ccolor = ccolor;
     rsys->_proc = lotus_new_proc((void*)0, lotus_render_main, lotus_default_fallback);
+    return 0;
 }
 

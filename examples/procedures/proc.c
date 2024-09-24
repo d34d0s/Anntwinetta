@@ -1,4 +1,4 @@
-#include "../../../engine/include/lotus.h"
+#include "../../engine/include/lotus.h"
 
 bool log_proc(void* msg) {
     char* _msg = (char*) msg;
