@@ -1,7 +1,7 @@
-#ifndef LOTUSEVENTS_H
-#define LOTUSEVENTS_H
+#ifndef ANNT_EVENTS_H
+#define ANNT_EVENTS_H
 
-#include "lotus_types.h"
+#include "annt_types.h"
 
 #include "../vendor/SDL2/SDL.h"
 
@@ -12,49 +12,49 @@
 /**
  * @brief Structure representing the state of a key on the keyboard.
  */
-typedef struct lotus_keyboard_key {
+typedef struct at_keyboard_key {
     bool isPressed;    /**< Indicates if the key is currently pressed. */
     bool wasPressed;   /**< Indicates if the key was pressed in the previous frame. */
     bool justReleased; /**< Indicates if the key was released in the current frame. */
-} lotus_keyboard_key;
+} at_keyboard_key;
 
 /**
  * @brief Structure representing the state of a mouse button.
  */
-typedef struct lotus_mouse_button {
+typedef struct at_mouse_button {
     bool isPressed;  /**< Indicates if the mouse button is currently pressed. */
     bool wasPressed; /**< Indicates if the mouse button was pressed in the previous frame. */
     int scrollValue; /**< The scroll value of the mouse wheel. */
-} lotus_mouse_button;
+} at_mouse_button;
 /**
  * @brief Enum representing various types of events.
  */
-typedef enum lotus_event_type {
-    lotus_quit_event,
-    lotus_none_event,
-    lotus_key_up_event,
-    lotus_key_down_event,
-    lotus_mouse_wheel_event,
-    lotus_mouse_motion_event,
-    lotus_mouse_button_up_event,
-    lotus_controller_stick_event,
-    lotus_mouse_button_down_event,
-    lotus_controller_button_up_event,
-    lotus_controller_button_down_event
-    // lotus_quit_event=32787
-} lotus_event_type;
+typedef enum at_event_type {
+    at_quit_event,
+    at_none_event,
+    at_key_up_event,
+    at_key_down_event,
+    at_mouse_wheel_event,
+    at_mouse_motion_event,
+    at_mouse_button_up_event,
+    at_controller_stick_event,
+    at_mouse_button_down_event,
+    at_controller_button_up_event,
+    at_controller_button_down_event
+    // at_quit_event=32787
+} at_event_type;
 
 /**
  * @brief Struct representing mouse buttons.
  */
-typedef struct lotus_mouse_buttons {
+typedef struct at_mouse_buttons {
     int LeftClick, RightClick, MiddleClick, X1, X2;
-} lotus_mouse_buttons;
+} at_mouse_buttons;
 
 /**
  * @brief Struct representing keyboard keys.
  */
-typedef struct lotus_keyboard_keys {
+typedef struct at_keyboard_keys {
     int ESCAPE, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12, PRINTSCREEN, SCROLLLOCK, PAUSE,
         GRAVE, NUM1, NUM2, NUM3, NUM4, NUM5, NUM6, NUM7, NUM8, NUM9, NUM0, MINUS, EQUALS, BACKSPACE,
         INSERT, HOME, PAGEUP, TAB, Q, W, E, R, T, Y, U, I, O, P, LEFTBRACKET, RIGHTBRACKET, BACKSLASH,
@@ -62,14 +62,14 @@ typedef struct lotus_keyboard_keys {
         LEFTSHIFT, Z, X, C, V, B, N, M, COMMA, PERIOD, SLASH, RIGHTSHIFT, LEFTCTRL, LEFTALT,
         SPACE, RIGHTALT, RIGHTCTRL, UP, DOWN, LEFT, RIGHT, CONTEXT_MENU, POWER, VOLUME_UP,
         VOLUME_DOWN, MUTE, WWW, CALCULATOR, MY_COMPUTER, MAIL, MEDIA_SELECT, APP1, APP2;
-} lotus_keyboard_keys;
+} at_keyboard_keys;
 
 /**
  * @brief Struct representing an event.
  */
-typedef struct lotus_event_t {
+typedef struct at_event_t {
     SDL_Event event;
-    lotus_event_type type; /**< Type of the event. */
+    at_event_type type; /**< Type of the event. */
     union data {
         struct key {
             int keyCode; /**< Key code for keyboard events. */
@@ -90,11 +90,11 @@ typedef struct lotus_event_t {
             int controllerButton;
         } controller;
     } data;
-} lotus_event_t;
+} at_event_t;
 
 
 // Clock for managing frame timing and FPS
-typedef struct lotus_clock {
+typedef struct at_clock {
    float FPS;           // Current frames per second
    int maxFPS;          // Target maximum frames per second
    float TPF;           // Time per frame in milliseconds
@@ -102,12 +102,12 @@ typedef struct lotus_clock {
    float deltaTime;     // Time since last frame in seconds
    float frameCount;    // Frames since last update
    int currentTime;     // Current time in milliseconds
-} lotus_clock;
+} at_clock;
 
-static lotus_mouse_button lotus_mouse_state[MAX_MOUSE_BUTTONS] = {0};
-static lotus_keyboard_key lotus_keyboard_state[MAX_KEYBOARD_KEYS] = {0};
+static at_mouse_button at_mouse_state[MAX_MOUSE_BUTTONS] = {0};
+static at_keyboard_key at_keyboard_state[MAX_KEYBOARD_KEYS] = {0};
 
-static lotus_mouse_buttons lotus_mouse = {
+static at_mouse_buttons at_mouse = {
     SDL_BUTTON_LEFT,
     SDL_BUTTON_RIGHT,
     SDL_BUTTON_MIDDLE,
@@ -115,7 +115,7 @@ static lotus_mouse_buttons lotus_mouse = {
     SDL_BUTTON_X2,
 };
 
-static lotus_keyboard_keys lotus_keyboard = {
+static at_keyboard_keys at_keyboard = {
     SDL_SCANCODE_ESCAPE,
     SDL_SCANCODE_F1,
     SDL_SCANCODE_F2,
@@ -218,21 +218,21 @@ static lotus_keyboard_keys lotus_keyboard = {
  *
  * @param engine Pointer to your lotus Engine structure.
  */
-void lotus_update_keyboard_state();
+void at_update_keyboard_state();
 
 /**
  * @brief Updates the mouse button state based on the events polled.
  *
  * @param engine Pointer to your lotus Engine structure.
  */
-void lotus_update_mouse_button_state();
+void at_update_mouse_button_state();
 
 /**
  * @brief Allocates memory for a lotus Event structure and returns a pointer to it.
  *
  * @return Pointer to the newly allocated lotus Event structure.
  */
-lotus_event_t *lotus_make_event_structure();
+at_event_t *at_make_event_structure();
 
 /**
  * @brief Checks if a key is triggered (pressed) in the current frame.
@@ -240,7 +240,7 @@ lotus_event_t *lotus_make_event_structure();
  * @param keyCode The SDL keycode of the key to check.
  * @return true if the key is triggered, false otherwise.
  */
-LOTUS_API bool lotus_is_key_triggered(int keyCode);
+ANNT_API bool at_is_key_triggered(int keyCode);
 
 /**
  * @brief Checks if a key is currently pressed.
@@ -249,7 +249,7 @@ LOTUS_API bool lotus_is_key_triggered(int keyCode);
  * @param keyCode The SDL keycode of the key to check.
  * @return true if the key is currently pressed, false otherwise.
  */
-LOTUS_API bool lotus_is_key_pressed(int keyCode);
+ANNT_API bool at_is_key_pressed(int keyCode);
 
 /**
  * @brief Checks if a key is currently released.
@@ -258,7 +258,7 @@ LOTUS_API bool lotus_is_key_pressed(int keyCode);
  * @param keyCode The SDL keycode of the key to check.
  * @return true if the key is currently released, false otherwise.
  */
-LOTUS_API bool lotus_is_key_released(int keyCode);
+ANNT_API bool at_is_key_released(int keyCode);
 
 /**
  * @brief Checks if a mouse button is triggered (pressed) in the current frame.
@@ -266,7 +266,7 @@ LOTUS_API bool lotus_is_key_released(int keyCode);
  * @param button The SDL button index of the mouse button to check.
  * @return true if the mouse button is triggered, false otherwise.
  */
-LOTUS_API bool lotus_is_mouse_button_triggered(int button);
+ANNT_API bool at_is_mouse_button_triggered(int button);
 
 /**
  * @brief Checks if a mouse button is down (held) in the current frame.
@@ -274,21 +274,21 @@ LOTUS_API bool lotus_is_mouse_button_triggered(int button);
  * @param button The SDL button index of the mouse button to check.
  * @return true if the mouse button is triggered, false otherwise.
  */
-LOTUS_API bool lotus_is_mouse_button_pressed(int button);
+ANNT_API bool at_is_mouse_button_pressed(int button);
 
 /**
  * @brief Checks if the mouse wheel has been scrolled up.
  *
  * @return true if the mouse wheel has been scrolled up, false otherwise.
  */
-LOTUS_API bool lotus_is_mouse_wheel_scrolled_up();
+ANNT_API bool at_is_mouse_wheel_scrolled_up();
 
 /**
  * @brief Checks if the mouse wheel has been scrolled down.
  *
  * @return true if the mouse wheel has been scrolled down, false otherwise.
  */
-LOTUS_API bool lotus_is_mouse_wheel_scrolled_down();
+ANNT_API bool at_is_mouse_wheel_scrolled_down();
 
 
 #endif

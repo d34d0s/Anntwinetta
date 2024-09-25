@@ -1,6 +1,6 @@
 #pragma once
 
-#define LOTUS_VERSION_MAJOR 1
-#define LOTUS_VERSION_MINOR 0
-#define LOTUS_VERSION_YEAR 2024
-#define LOTUS_VERSION_PHASE "alpha"
+#define ANNT_VERSION_MAJOR 1
+#define ANNT_VERSION_MINOR 0
+#define ANNT_VERSION_YEAR 2024
+#define ANNT_VERSION_PHASE "alpha"

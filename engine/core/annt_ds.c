@@ -1,8 +1,8 @@
-#include "../include/lotus_ds.h"
+#include "../include/annt_ds.h"
 
-bool lotus_full_darray(darray_t* d) { return (d->count >= d->max) ? 1 : 0; }
-darray_t lotus_new_darray(int max, int c_init, ...) {
-    darray_t d;
+bool at_full_darray(at_darray_t* d) { return (d->count >= d->max) ? 1 : 0; }
+at_darray_t at_new_darray(int max, int c_init, ...) {
+    at_darray_t d;
     d.arr = (void**)malloc(c_init*sizeof(void*));
     if (!d.arr) { return d; }
     d.count = c_init; d.max = max;
@@ -14,7 +14,7 @@ darray_t lotus_new_darray(int max, int c_init, ...) {
     } va_end(args); return d;
 }
 
-bool lotus_resize_darray(int more, darray_t* d) {
+bool at_resize_darray(int more, at_darray_t* d) {
     if (more > d->max || more <= 0) { return 1; }
 
     void** temp = (void**)realloc(d->arr, (d->count+more)*sizeof(void*));
@@ -22,11 +22,11 @@ bool lotus_resize_darray(int more, darray_t* d) {
 
     return 0;
 }
-bool lotus_append_darray(darray_t* d, void* v) {
-    if (d->count+1 > d->max || lotus_full_darray(d)) { return 1; }
+bool at_append_darray(at_darray_t* d, void* v) {
+    if (d->count+1 > d->max || at_full_darray(d)) { return 1; }
     d->arr[d->count++] = v; return 0;
 }
-void* lotus_pop_darray(darray_t* d) {
+void* at_pop_darray(at_darray_t* d) {
     if ((d->count <= 0) | !d->arr) { return (void*)0; }
     void* v = d->arr[d->count-1];
     d->arr[--d->count] = (void*)0;

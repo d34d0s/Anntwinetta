@@ -1,46 +1,48 @@
-#include "../include/lotus_math.h"
+#include "../include/annt_math.h"
 
-float lmRadians(float deg) { return deg * LM_PI/180.0; }
-
-// Creates a lm_vec2
-lm_vec2 lm_new_vec2(float x, float y) {
-    return (lm_vec2){x, y};
+float at_to_radians(float deg) {
+    return deg * ANNT_PI/180.0;
 }
 
-// Scales a lm_vec2 by a scalar value
-lm_vec2 lmScaleVec2(lm_vec2 v, float scale) {
-    return (lm_vec2){v.x * scale, v.y * scale};
+// Creates a at_vec2
+at_vec2 at_new_vec2(float x, float y) {
+    return (at_vec2){x, y};
+}
+
+// Scales a at_vec2 by a scalar value
+at_vec2 at_scale_vec2(at_vec2 v, float scale) {
+    return (at_vec2){v.x * scale, v.y * scale};
 }
 
 // Adds two Vec2s
-lm_vec2 lmAddVec2(lm_vec2 v1, lm_vec2 v2) {
-    return (lm_vec2){v1.x + v2.x, v1.y + v2.y};
+at_vec2 at_add_vec2(at_vec2 v1, at_vec2 v2) {
+    return (at_vec2){v1.x + v2.x, v1.y + v2.y};
 }
 
-// Subtracts one lm_vec2 from another
-lm_vec2 lmSubVec2(lm_vec2 v1, lm_vec2 v2) {
-    return (lm_vec2){v1.x - v2.x, v1.y - v2.y};
+// Subtracts one at_vec2 from another
+at_vec2 at_sub_vec2(at_vec2 v1, at_vec2 v2) {
+    return (at_vec2){v1.x - v2.x, v1.y - v2.y};
 }
 
 // Dot product of two Vec2s
-float lmDotVec2(lm_vec2 v1, lm_vec2 v2) {
+float at_dot_vec2(at_vec2 v1, at_vec2 v2) {
     return v1.x * v2.x + v1.y * v2.y;
 }
 
-// Normalize a lm_vec2 (make it unit length)
-lm_vec2 lmNormVec2(lm_vec2 v) {
+// Normalize a at_vec2 (make it unit length)
+at_vec2 at_norm_vec2(at_vec2 v) {
     float length = sqrtf(v.x * v.x + v.y * v.y);
-    return lmScaleVec2(v, 1.0f / length);
+    return at_scale_vec2(v, 1.0f / length);
 }
 
 
-// Creates a lm_vec3
-lm_vec3 lm_new_vec3(float x, float y, float z) {
-    return (lm_vec3){x, y, z};
+// Creates a at_vec3
+at_vec3 at_new_vec3(float x, float y, float z) {
+    return (at_vec3){x, y, z};
 }
 // Scales a vector by a scalar value
-lm_vec3 lmScaleVec3(lm_vec3 v, float scale) {
-    lm_vec3 result;
+at_vec3 at_scale_vec3(at_vec3 v, float scale) {
+    at_vec3 result;
     result.x = v.x * scale;
     result.y = v.y * scale;
     result.z = v.z * scale;
@@ -48,8 +50,8 @@ lm_vec3 lmScaleVec3(lm_vec3 v, float scale) {
 }
 
 // Adds two vectors
-lm_vec3 lmAddVec3(lm_vec3 v1, lm_vec3 v2) {
-    lm_vec3 result;
+at_vec3 at_add_vec3(at_vec3 v1, at_vec3 v2) {
+    at_vec3 result;
     result.x = v1.x + v2.x;
     result.y = v1.y + v2.y;
     result.z = v1.z + v2.z;
@@ -57,27 +59,27 @@ lm_vec3 lmAddVec3(lm_vec3 v1, lm_vec3 v2) {
 }
 
 // Subtracts one vector from another
-lm_vec3 lmSubVec3(lm_vec3 v1, lm_vec3 v2) {
-    lm_vec3 result;
+at_vec3 at_sub_vec3(at_vec3 v1, at_vec3 v2) {
+    at_vec3 result;
     result.x = v1.x - v2.x;
     result.y = v1.y - v2.y;
     result.z = v1.z - v2.z;
     return result;
 }
 
-float lmDotVec3(lm_vec3 a, lm_vec3 b) {
+float at_dot_vec3(at_vec3 a, at_vec3 b) {
     return a.x * b.x + a.y * b.y + a.z * b.z;
 }
 
 // Normalize a vector (make it unit length)
-lm_vec3 lmNormVec3(lm_vec3 v) {
+at_vec3 at_norm_vec3(at_vec3 v) {
     float length = sqrtf(v.x * v.x + v.y * v.y + v.z * v.z);
-    return lmScaleVec3(v, 1.0f / length);
+    return at_scale_vec3(v, 1.0f / length);
 }
 
 // Cross product of two vectors
-lm_vec3 lmCrossVec3(lm_vec3 v1, lm_vec3 v2) {
-    lm_vec3 result;
+at_vec3 at_cross_vec3(at_vec3 v1, at_vec3 v2) {
+    at_vec3 result;
     result.x = v1.y * v2.z - v1.z * v2.y;
     result.y = v1.z * v2.x - v1.x * v2.z;
     result.z = v1.x * v2.y - v1.y * v2.x;
@@ -85,65 +87,65 @@ lm_vec3 lmCrossVec3(lm_vec3 v1, lm_vec3 v2) {
 }
 
 
-// Creates a lm_vec4
-lm_vec4 lm_new_vec4(float x, float y, float z, float w) {
-    return (lm_vec4){x, y, z, w};
+// Creates a at_vec4
+at_vec4 at_new_vec4(float x, float y, float z, float w) {
+    return (at_vec4){x, y, z, w};
 }
 
-// Scales a lm_vec4 by a scalar value
-lm_vec4 lmScaleVec4(lm_vec4 v, float scale) {
-    return (lm_vec4){v.x * scale, v.y * scale, v.z * scale, v.w * scale};
+// Scales a at_vec4 by a scalar value
+at_vec4 at_scale_vec4(at_vec4 v, float scale) {
+    return (at_vec4){v.x * scale, v.y * scale, v.z * scale, v.w * scale};
 }
 
 // Adds two Vec4s
-lm_vec4 lmAddVec4(lm_vec4 v1, lm_vec4 v2) {
-    return (lm_vec4){v1.x + v2.x, v1.y + v2.y, v1.z + v2.z, v1.w + v2.w};
+at_vec4 at_add_vec4(at_vec4 v1, at_vec4 v2) {
+    return (at_vec4){v1.x + v2.x, v1.y + v2.y, v1.z + v2.z, v1.w + v2.w};
 }
 
-// Subtracts one lm_vec4 from another
-lm_vec4 lmSubVec4(lm_vec4 v1, lm_vec4 v2) {
-    return (lm_vec4){v1.x - v2.x, v1.y - v2.y, v1.z - v2.z, v1.w - v2.w};
+// Subtracts one at_vec4 from another
+at_vec4 at_sub_vec4(at_vec4 v1, at_vec4 v2) {
+    return (at_vec4){v1.x - v2.x, v1.y - v2.y, v1.z - v2.z, v1.w - v2.w};
 }
 
 // Dot product of two Vec4s
-float lmDotVec4(lm_vec4 v1, lm_vec4 v2) {
+float at_dot_vec4(at_vec4 v1, at_vec4 v2) {
     return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z + v1.w * v2.w;
 }
 
-// Normalize a lm_vec4 (make it unit length)
-lm_vec4 lmNormVec4(lm_vec4 v) {
+// Normalize a at_vec4 (make it unit length)
+at_vec4 at_norm_vec4(at_vec4 v) {
     float length = sqrtf(v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w);
-    return lmScaleVec4(v, 1.0f / length);
+    return at_scale_vec4(v, 1.0f / length);
 }
 
 
-lm_mat4 lmIdentity() {
-    lm_mat4 result = {1.0f, 0.0f, 0.0f, 0.0f,
+at_mat4 at_identity() {
+    at_mat4 result = {1.0f, 0.0f, 0.0f, 0.0f,
                      0.0f, 1.0f, 0.0f, 0.0f,
                      0.0f, 0.0f, 1.0f, 0.0f,
                      0.0f, 0.0f, 0.0f, 1.0f};
     return result;
 }
 
-lm_vec3 lmMulMat4Vec3(lm_mat4 m, lm_vec3 v) {
-    lm_vec3 result;
+at_vec3 at_mul_mat4_vec3(at_mat4 m, at_vec3 v) {
+    at_vec3 result;
     result.x = m.m[0] * v.x + m.m[4] * v.y + m.m[8] * v.z + m.m[12];
     result.y = m.m[1] * v.x + m.m[5] * v.y + m.m[9] * v.z + m.m[13];
     result.z = m.m[2] * v.x + m.m[6] * v.y + m.m[10] * v.z + m.m[14];
     return result;
 }
 
-lm_mat4 lmTransMat4(float x, float y, float z) {
-    lm_mat4 result = lmIdentity();
+at_mat4 at_trans_mat4(float x, float y, float z) {
+    at_mat4 result = at_identity();
     result.m[12] = x;
     result.m[13] = y;
     result.m[14] = z;
     return result;
 }
 
-lm_mat4 lmRotMat4(float x, float y, float z, float angle) {
-    lm_mat4 result = lmIdentity();
-    float rad = lmRadians(angle);
+at_mat4 at_rot_mat4(float x, float y, float z, float angle) {
+    at_mat4 result = at_identity();
+    float rad = at_to_radians(angle);
     float cos_theta = cosf(rad);
     float sin_theta = sinf(rad);
 
@@ -169,16 +171,16 @@ lm_mat4 lmRotMat4(float x, float y, float z, float angle) {
     return result;
 }
 
-lm_mat4 lmScaleMat4(float x, float y, float z) {
-    lm_mat4 result = lmIdentity();
+at_mat4 at_scale_mat4(float x, float y, float z) {
+    at_mat4 result = at_identity();
     result.m[0] = x;
     result.m[5] = y;
     result.m[10] = z;
     return result;
 }
 
-lm_mat4 lmMulMat4(lm_mat4 a, lm_mat4 b) {
-    lm_mat4 result = {0};
+at_mat4 at_mul_mat4(at_mat4 a, at_mat4 b) {
+    at_mat4 result = {0};
     for (int row = 0; row < 4; ++row) {
         for (int col = 0; col < 4; ++col) {
             for (int i = 0; i < 4; ++i) {
@@ -189,8 +191,8 @@ lm_mat4 lmMulMat4(lm_mat4 a, lm_mat4 b) {
     return result;
 }
 
-lm_mat4 lmOrtho(float left, float right, float bottom, float top, float near, float far) {
-    lm_mat4 result = lmIdentity();
+at_mat4 at_ortho(float left, float right, float bottom, float top, float near, float far) {
+    at_mat4 result = at_identity();
     result.m[0] = 2.0f / (right - left);
     result.m[5] = 2.0f / (top - bottom);
     result.m[10] = -2.0f / (far - near);
@@ -200,9 +202,9 @@ lm_mat4 lmOrtho(float left, float right, float bottom, float top, float near, fl
     return result;
 }
 
-lm_mat4 lmPerspective(float fov, float aspect, float near, float far) {
+at_mat4 at_perspective(float fov, float aspect, float near, float far) {
     float tan_half_fov = tanf(fov / 2.0f);
-    lm_mat4 result = {0};
+    at_mat4 result = {0};
     result.m[0] = 1.0f / (aspect * tan_half_fov);
     result.m[5] = 1.0f / tan_half_fov;
     result.m[10] = -(far + near) / (far - near);
@@ -211,12 +213,12 @@ lm_mat4 lmPerspective(float fov, float aspect, float near, float far) {
     return result;
 }
 
-lm_mat4 lmLookAt(lm_vec3 eye, lm_vec3 center, lm_vec3 up) {
-    lm_vec3 f = lmNormVec3(lmSubVec3(center, eye));
-    lm_vec3 s = lmNormVec3(lmCrossVec3(f, up));
-    lm_vec3 u = lmCrossVec3(s, f);
+at_mat4 at_look_at(at_vec3 eye, at_vec3 center, at_vec3 up) {
+    at_vec3 f = at_norm_vec3(at_sub_vec3(center, eye));
+    at_vec3 s = at_norm_vec3(at_cross_vec3(f, up));
+    at_vec3 u = at_cross_vec3(s, f);
 
-    lm_mat4 result = lmIdentity();
+    at_mat4 result = at_identity();
     result.m[0] = s.x;
     result.m[4] = s.y;
     result.m[8] = s.z;
@@ -226,8 +228,8 @@ lm_mat4 lmLookAt(lm_vec3 eye, lm_vec3 center, lm_vec3 up) {
     result.m[2] = -f.x;
     result.m[6] = -f.y;
     result.m[10] = -f.z;
-    result.m[12] = -lmDotVec3(s, eye);
-    result.m[13] = -lmDotVec3(u, eye);
-    result.m[14] = lmDotVec3(f, eye);
+    result.m[12] = -at_dot_vec3(s, eye);
+    result.m[13] = -at_dot_vec3(u, eye);
+    result.m[14] = at_dot_vec3(f, eye);
     return result;
 }
