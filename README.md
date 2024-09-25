@@ -1,4 +1,4 @@
-![Anntwinetta_Banner_3x](https://github.com/user-attachments/assets/2c57c771-ac35-4549-be99-f2de43776287)
+![banner3x](https://github.com/user-attachments/assets/fdc5a337-8fd8-4dbb-a4f6-b53edd92c81c)
 
 [![GitHub Releases Downloads](https://img.shields.io/github/downloads/F4R4W4Y/Anntwinetta/total)](https://github.com/F4R4W4Y/Anntwinetta/releases)
 [![GitHub Stars](https://img.shields.io/github/stars/F4R4W4Y/Anntwinetta?style=flat&label=stars)](https://github.com/F4R4W4Y/Anntwinetta/stargazers)
@@ -8,7 +8,7 @@
 #### Relevant Links
 [  [Official Wiki](https://github.com/F4R4W4Y/Anntwinetta/wiki) | [API Documentation](https://github.com/F4R4W4Y/Anntwinetta/wiki/Anntwinetta-API-Docs) | [Anntwinetta Examples](https://github.com/F4R4W4Y/Anntwinetta/tree/refactor_01/examples) ]
   
-[  [Official Reddit](https://www.reddit.com/r/AnntwinettaEngine/) | [Anntwinetta Discussions](https://github.com/F4R4W4Y/Anntwinetta/discussions) | [Anntwinetta FAQ](https://github.com/F4R4W4Y/Anntwinetta/wiki/Anntwinetta-FAQ) ]
+[  [Official Reddit](https://www.reddit.com/r/Anntwinetta/) | [Anntwinetta Discussions](https://github.com/F4R4W4Y/Anntwinetta/discussions) | [Anntwinetta FAQ](https://github.com/F4R4W4Y/Anntwinetta/wiki/Anntwinetta-FAQ) ]
 </br>
 
 <h2> 🪷 Anntwinetta' Contributors 🪷 </h2>
