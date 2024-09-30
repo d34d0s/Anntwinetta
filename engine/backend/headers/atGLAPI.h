@@ -4,7 +4,7 @@
 #include "../../headers/attypes.h"
 #include "../../headers/athelpers.h"
 
-#include "../../vendor/SDL2/SDl.h"
+#include "../../vendor/SDL2/SDL.h"
 
 #include "../../vendor/GL/glew.h"   // TODO: REMOVE THIS ON RELEASE
 #ifdef _ATWIN_WINDOWS_

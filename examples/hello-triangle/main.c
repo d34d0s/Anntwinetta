@@ -1,4 +1,4 @@
-#include "../../engine/headers/anntwinetta.h"
+#include <anntwinetta.h>
 
 char vertexShader[] = {
     "#version 430 core\n"

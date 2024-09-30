@@ -37,13 +37,15 @@ def at_install(args:argparse.Namespace) -> None:
         os.system(f'curl -L https://github.com/F4R4W4Y/Anntwinetta/releases/download/v{at_version}/Anntwinetta_{at_version}.zip -o {install_dir}/Anntwinetta_{at_version}.zip')
         shutil.unpack_archive(f'{install_dir}/Anntwinetta_{at_version}.zip', install_dir)
         os.remove(f'{install_dir}/Anntwinetta_{at_version}.zip')
-        os.system(f'setx at_DIR {install_dir}\\at_{at_version}'); os.environ['ATWIN_DIR']=f'{install_dir}\\at_{at_version}'
+        os.system(f'setx ATWIN_DIR {install_dir}\\Anntwinetta_{at_version}'); os.environ['ATWIN_DIR']=f'{install_dir}\\Anntwinetta_{at_version}'
+        os.system(f'setx C_INCLUDE_PATH {os.environ.get('C_INCLUDE_PATH', '')}{install_dir}\\Anntwinetta_{at_version}\\engine\\headers;')
         if at_load_dll():
             print(f'Anntwinetta v{at_version} Installed Successfully At: {install_dir}')
 
     elif args.repo:
         os.system(f'git clone -b {args.repo} https://github.com/F4R4W4Y/Anntwinetta.git {install_dir}')
-        os.system(f'setx at_DIR {install_dir}\\Anntwinetta'); os.environ['ATWIN_DIR']=f'{install_dir}\\Anntwinetta'
+        os.system(f'setx ATWIN_DIR {install_dir}'); os.environ['ATWIN_DIR']=f'{install_dir}'
+        os.system(f'setx C_INCLUDE_PATH {os.environ.get('C_INCLUDE_PATH', '')}{install_dir}\\engine\\headers;')
         if at_load_dll(): print(f'Anntwinetta Repo Cloned Successfully To: {install_dir}')
 
     elif args.dev:
@@ -51,7 +53,9 @@ def at_install(args:argparse.Namespace) -> None:
             os.system(f'curl -L https://github.com/F4R4W4Y/Anntwinetta/releases/download/v{args.dev}/Anntwinetta_{args.dev}_devkit.zip -o {install_dir}/Anntwinetta_{args.dev}_devkit.zip')
             shutil.unpack_archive(f'{install_dir}/Anntwinetta_{args.dev}_devkit.zip', install_dir)
             os.remove(f'{install_dir}/Anntwinetta_{args.dev}_devkit.zip')
-        os.system(f'setx at_DIR {install_dir}'); os.environ['ATWIN_DIR']=f'{install_dir}'
+            os.system(f'setx ATWIN_DIR {install_dir}\\Anntwinetta_{args.dev}_devkit'); os.environ['ATWIN_DIR']=f'{install_dir}\\Anntwinetta_{args.dev}_devkit'
+            os.system(f'setx C_INCLUDE_PATH {os.environ.get('C_INCLUDE_PATH', '')}{install_dir}\\Anntwinetta_{args.dev}_devkit\\engine\\headers;')
+
         if at_load_dll(): print(f'Anntwinetta DevKit v{args.dev} Installed Successfully At: {install_dir}')
 
 
@@ -77,6 +81,7 @@ def at_build_windows() -> None:
 
     engine_dir:str=f'{at_dir}\\engine'
     build_dir:str=f'{at_dir}\\build'
+    if not os.path.exists(f'{build_dir}'): os.mkdir(f'{build_dir}')
     vendor_dir:str=f'{engine_dir}\\vendor'
     if os.path.exists(f'{build_dir}\\bin\\Anntwinetta.dll'): os.system(f'del {build_dir}\\bin\\Anntwinetta.dll /Q')
 
@@ -84,6 +89,8 @@ def at_build_windows() -> None:
         os.mkdir(build_dir)
     if not os.path.exists(f'{build_dir}\\bin'):
         os.mkdir(f'{build_dir}\\bin')
+    if not os.path.exists(f'{build_dir}\\lib'):
+        os.mkdir(f'{build_dir}\\lib')
 
     for r, _, f in os.walk(f'{engine_dir}'):
         for cfile in f:
@@ -93,7 +100,7 @@ def at_build_windows() -> None:
     for r, _, f in os.walk(f'{build_dir}\\bin'):
         for ofile in f:
             o_files += f'{build_dir}\\bin\\{ofile}'+' '
-    os.system(f'gcc -shared {o_files} -o {build_dir}\\bin\\Anntwinetta.dll -I{at_dir}\\engine -I{vendor_dir} -L{vendor_dir}\\bin -lSDL2 -lopengl32 -luser32')
+    os.system(f'gcc -shared {o_files} -o {build_dir}\\bin\\Anntwinetta.dll -I{at_dir}\\engine -I{vendor_dir} -L{vendor_dir}\\bin -lSDL2 -lglew32 -lopengl32 -luser32')
     os.system(f'ar rcs {build_dir}\\lib\\libAnntwinetta.a {o_files}')
     os.system(f'del {build_dir}\\bin\\*.o /Q')
     os.system(f'xcopy {vendor_dir}\\bin {build_dir}\\bin /s /q')
@@ -209,7 +216,7 @@ def at_build_project_webassembly() -> None:
         f'-L{at_build_dir}\\lib '
         f'{at_build_dir}\\lib\\libAnntwinettaWeb.a '
         f'--shell-file {at_build_dir}\\wasm\\shell.html '
-    ); os.system(emcc_command);
+    ); os.system(emcc_command); os.system( f'xcopy {engine_dir}\\platform\\emscripten\\shell.html {build_dir}\\web_build\\ /q' )
     
     print(f'\nWeb Project Built Successfully')
 
