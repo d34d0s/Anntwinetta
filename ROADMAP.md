@@ -1,22 +1,32 @@
 # 🌸 **Anntwinetta Engine Roadmap** 🌸
 
 ### **Core Engine Development**
-- **Platform Layer Abstraction**  
+- **Platform Layer**
+  - [✔️] Event+Input Process (SDL2)
   - [✔️] Compile for Windows (Native OpenGL)  
-  - [✔️] Compile for Web (Emscripten + WebGL2)
+  - [] Compile for Web (Emscripten + WebGL2)
 
 - **Graphics API Implementations**  
-  - [ ] OpenGL API (Re)Implementation  
-  - [ ] WebGL2 API (Re)Implementation
+  - [ ] WebGL API Implementation
+  - [✔️] OpenGL API (Re)Implementation  
 
 - **Entity Component System (ECS)**  
   - [ ] (Re)Implementation for optimized performance and scalability
 
 ---
 
+### **Internal Data-Structures**
+- **Resource Storage**
+  - [✔️] Process Structure
+  - [1/2] Dynamic Arrays  (harder than i thought :P)
+  - [✔️] String Hashmap (linear probing, but good enough for now)
+
+---
+
 ### **Scripting and Modding**
 - **Anntwinetta SDK (LSDK)**  
-  - [✔️] Build, Install, Update for both engine and user modules
+  - [✔️] Build user modules
+  - [✔️] Build, Install, Update engine source
 
 - **Lily Module**  
   - [ ] Anntwinetta Scripting System  
@@ -33,7 +43,7 @@
   - [ ] Internal modules for engine feature testing
 
 - **Anntwinetta Example Modules**  
-  - [✔️] Example mods/extensions to showcase engine capabilities
+  - [] Example mods/extensions to showcase engine capabilities
 
 ---
 

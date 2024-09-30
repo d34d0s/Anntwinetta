@@ -11,7 +11,7 @@ at_releases_dir:str='https://github.com/F4R4W4Y/Anntwinetta/releases/download/v{
 def query_stdin(msg:str) -> str: return str(input(f'{msg}: '))
 
 def at_load_dll() -> bool:
-    at_dir:str=os.environ.get('ANNT_DIR', None)
+    at_dir:str=os.environ.get('ATWIN_DIR', None)
     if at_dir and os.path.exists(f'{at_dir}\\build\\bin'):
         at_dir='\\'.join(at_dir.split('/'))
         try:
@@ -37,13 +37,13 @@ def at_install(args:argparse.Namespace) -> None:
         os.system(f'curl -L https://github.com/F4R4W4Y/Anntwinetta/releases/download/v{at_version}/Anntwinetta_{at_version}.zip -o {install_dir}/Anntwinetta_{at_version}.zip')
         shutil.unpack_archive(f'{install_dir}/Anntwinetta_{at_version}.zip', install_dir)
         os.remove(f'{install_dir}/Anntwinetta_{at_version}.zip')
-        os.system(f'setx at_DIR {install_dir}\\at_{at_version}'); os.environ['ANNT_DIR']=f'{install_dir}\\at_{at_version}'
+        os.system(f'setx at_DIR {install_dir}\\at_{at_version}'); os.environ['ATWIN_DIR']=f'{install_dir}\\at_{at_version}'
         if at_load_dll():
             print(f'Anntwinetta v{at_version} Installed Successfully At: {install_dir}')
 
     elif args.repo:
         os.system(f'git clone -b {args.repo} https://github.com/F4R4W4Y/Anntwinetta.git {install_dir}')
-        os.system(f'setx at_DIR {install_dir}\\Anntwinetta'); os.environ['ANNT_DIR']=f'{install_dir}\\Anntwinetta'
+        os.system(f'setx at_DIR {install_dir}\\Anntwinetta'); os.environ['ATWIN_DIR']=f'{install_dir}\\Anntwinetta'
         if at_load_dll(): print(f'Anntwinetta Repo Cloned Successfully To: {install_dir}')
 
     elif args.dev:
@@ -51,7 +51,7 @@ def at_install(args:argparse.Namespace) -> None:
             os.system(f'curl -L https://github.com/F4R4W4Y/Anntwinetta/releases/download/v{args.dev}/Anntwinetta_{args.dev}_devkit.zip -o {install_dir}/Anntwinetta_{args.dev}_devkit.zip')
             shutil.unpack_archive(f'{install_dir}/Anntwinetta_{args.dev}_devkit.zip', install_dir)
             os.remove(f'{install_dir}/Anntwinetta_{args.dev}_devkit.zip')
-        os.system(f'setx at_DIR {install_dir}'); os.environ['ANNT_DIR']=f'{install_dir}'
+        os.system(f'setx at_DIR {install_dir}'); os.environ['ATWIN_DIR']=f'{install_dir}'
         if at_load_dll(): print(f'Anntwinetta DevKit v{args.dev} Installed Successfully At: {install_dir}')
 
 
@@ -61,7 +61,7 @@ Platform Detection
 mac_os:bool=False
 linux_os:bool=False
 windows_os:bool=True if os.getenv('SYSTEMROOT', None) else False
-at_installed:bool=True if os.environ.get('ANNT_DIR', None) else False
+at_installed:bool=True if os.environ.get('ATWIN_DIR', None) else False
 if not at_installed: print('[ ERROR ] Could Not Locate Anntwinetta Installation Directory!'); sys.exit()
 
 
@@ -73,7 +73,7 @@ def at_build_windows() -> None:
     
     o_files:str = ''
     c_files:list[str]=[]
-    at_dir:str=os.environ.get('ANNT_DIR', None); at_dir='\\'.join(at_dir.split('/'))
+    at_dir:str=os.environ.get('ATWIN_DIR', None); at_dir='\\'.join(at_dir.split('/'))
 
     engine_dir:str=f'{at_dir}\\engine'
     build_dir:str=f'{at_dir}\\build'
@@ -85,10 +85,10 @@ def at_build_windows() -> None:
     if not os.path.exists(f'{build_dir}\\bin'):
         os.mkdir(f'{build_dir}\\bin')
 
-    for r, _, f in os.walk(engine_dir):
+    for r, _, f in os.walk(f'{engine_dir}'):
         for cfile in f:
             if cfile.endswith('.c'): c_files.append([cfile, os.path.join(r, cfile)])
-    [ os.system(f'gcc -D_ANNT_GL_ -D_ANNT_WINDOWS_ -D_ANNT_EXPORT_ -c {fp} -o {build_dir}\\bin\\{f.removesuffix('.c')}.o') for f, fp in c_files ]
+    [ os.system(f'gcc -D_ATWIN_GL_ -D_ATWIN_WINDOWS_ -D_ATWIN_EXPORT_ -c {fp} -o {build_dir}\\bin\\{f.removesuffix('.c')}.o') for f, fp in c_files ]
 
     for r, _, f in os.walk(f'{build_dir}\\bin'):
         for ofile in f:
@@ -96,6 +96,7 @@ def at_build_windows() -> None:
     os.system(f'gcc -shared {o_files} -o {build_dir}\\bin\\Anntwinetta.dll -I{at_dir}\\engine -I{vendor_dir} -L{vendor_dir}\\bin -lSDL2 -lopengl32 -luser32')
     os.system(f'ar rcs {build_dir}\\lib\\libAnntwinetta.a {o_files}')
     os.system(f'del {build_dir}\\bin\\*.o /Q')
+    os.system(f'xcopy {vendor_dir}\\bin {build_dir}\\bin /s /q')
     
 
     if at_load_dll(): print(f'\nNative DLL/Archive Build Successful')
@@ -105,7 +106,7 @@ def at_build_webassembly() -> None:
     
     o_files:str = ''
     c_files:list[str]=[]
-    at_dir:str=os.environ.get('ANNT_DIR', None); at_dir='\\'.join(at_dir.split('/'))
+    at_dir:str=os.environ.get('ATWIN_DIR', None); at_dir='\\'.join(at_dir.split('/'))
 
     engine_dir:str=f'{at_dir}\\engine'
     build_dir:str=f'{at_dir}\\build'
@@ -130,7 +131,7 @@ def at_build_webassembly() -> None:
         o_file = f'{f.removesuffix('.c')}.o'
         o_files+=f'{build_dir}\\wasm\\{o_file} '
         emcc_command = (
-            f'emcc --no-entry -g -c {p} -D_ANNT_GL_ -D_ANNT_WASM_ -o {build_dir}\\wasm\\{o_file}'
+            f'emcc --no-entry -g -c {p} -D_ATWIN_GL_ -D_ATWIN_WEB_ -o {build_dir}\\wasm\\{o_file}'
         ); os.system(emcc_command)
 
     emcc_command = (
@@ -142,7 +143,7 @@ def at_build_webassembly() -> None:
 def at_build_project_windows() -> None:
     if at_load_dll(): print(f'\nBuilding Project Windows Native')
 
-    at_dir:str=os.environ.get('ANNT_DIR', None); at_dir='\\'.join(at_dir.split('/'))
+    at_dir:str=os.environ.get('ATWIN_DIR', None); at_dir='\\'.join(at_dir.split('/'))
 
     engine_dir:str=f'{at_dir}\\engine'
     vendor_dir:str=f'{engine_dir}\\vendor'
@@ -159,7 +160,7 @@ def at_build_project_windows() -> None:
             if not c_file.endswith('.c'): continue
             c_file_str += os.path.join(r, c_file)
 
-    os.system( f' gcc -D_ANNT_GL_ -D_ANNT_WINDOWS_ {c_file_str} -I{engine_dir} -I{vendor_dir} -L{at_build_dir}\\bin -L{vendor_dir}\\bin -lAnntwinetta -lSDL2 -lopengl32 -o {build_dir}\\build\\at_project ' )
+    os.system( f' gcc -D_ATWIN_GL_ -D_ATWIN_WINDOWS_ {c_file_str} -I{engine_dir} -I{vendor_dir} -L{at_build_dir}\\bin -L{vendor_dir}\\bin -lAnntwinetta -lSDL2 -lopengl32 -o {build_dir}\\build\\at_project ' )
     os.system( f'xcopy {vendor_dir}\\bin\\ {build_dir}\\build /s /q' )
     os.system( f'xcopy {at_build_dir}\\bin\\ {build_dir}\\build /s /q' )
 
@@ -168,7 +169,7 @@ def at_build_project_windows() -> None:
 def at_build_project_webassembly() -> None:
     if at_load_dll(): print(f'\nBuilding Project For Web')
 
-    at_dir:str=os.environ.get('ANNT_DIR', None); at_dir='\\'.join(at_dir.split('/'))
+    at_dir:str=os.environ.get('ATWIN_DIR', None); at_dir='\\'.join(at_dir.split('/'))
 
     engine_dir:str=f'{at_dir}\\engine'
     vendor_dir:str=f'{engine_dir}\\vendor'
@@ -195,8 +196,8 @@ def at_build_project_webassembly() -> None:
         f'emcc '
         f'-Os '
         f'-Wall '
-        f'-D_ANNT_GL_ '
-        f'-D_ANNT_WASM_ '
+        f'-D_ATWIN_GL_ '
+        f'-D_ATWIN_WEB_ '
         f'{c_file_str} '
         f'-o {build_dir}\\web_build\\at_game.html '
         f'-s USE_SDL=2 '

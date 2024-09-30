@@ -1,2 +1,0 @@
-# Lotus API Documentation
-
