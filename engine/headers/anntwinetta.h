@@ -21,3 +21,8 @@ ATWIN_API void atDestroyMeshLayout(ATmeshLayout* layout);
 ATWIN_API int atMakeShader(const char* vertex, const char* fragment);
 ATWIN_API ATshaderLayout* atGetShaderLayout(int index);
 ATWIN_API void atDestroyShaderLayout(ATshaderLayout* layout);
+
+ATWIN_API atErrorType atMakeUniform(ATuniformType type, int shaderIndex, const char* name, void* value);
+ATWIN_API ATuniformLayout* atGetUniformLayout(int shaderIndex, const char* name);
+ATWIN_API void atSetUniform(ATuniformType type, int shaderIndex, const char* name);
+

@@ -114,3 +114,20 @@ ATshaderLayout* atGetShaderLayout(int index) {
 void atDestroyShaderLayout(ATshaderLayout* layout) {
     _atDestroyShaderLayout(layout);
 }
+
+atErrorType atMakeUniform(ATuniformType type, int shaderIndex, const char* name, void* value) {
+    ATshaderData* shader_data = _atGetShaderData();
+    return _atSetShaderUniform(shader_data, shaderIndex, type, name, value);
+}
+
+ATuniformLayout* atGetUniformLayout(int shaderIndex, const char* name) {
+    ATshaderData* shader_data = _atGetShaderData();
+    return _atGetShaderUniform(shader_data, shaderIndex, name);
+}
+
+void atSetUniform(ATuniformType type, int shaderIndex, const char* name) {
+    ATshaderLayout* shader = atGetShaderLayout(shaderIndex);
+    ATuniformLayout* uniform = atGetUniformLayout(shaderIndex, name);
+    glUseProgram(*shader->program);
+    atglSetUniformValue(UNIFORM_MAT4, *shader->program, uniform->location, uniform->value);
+}

@@ -10,7 +10,7 @@ typedef struct ATarray {
 } ATarray;
 
 typedef struct ATkvPair {
-    uint8_t* k;
+    const char* k;
     void* v;
 } ATkvPair;
 
@@ -31,13 +31,13 @@ ATWIN_API atErrorType atInsertArray(int index, ATarray* inArr, void* inData);
 // hashmap
 ATWIN_API void atDestroyHashmap(AThashmap* m);
 ATWIN_API AThashmap* atMakeHashmap(uint32_t max);
-ATWIN_API uint32_t atStringHash(uint8_t* buffer);
+ATWIN_API uint32_t atStringHash(const char* buffer);
 
 ATWIN_API uint8_t atProbeHashmapF(AThashmap* m, uint32_t* kHash, const char* key);
 ATWIN_API uint8_t atProbeHashmapR(AThashmap* m, uint32_t* kHash, const char* key);
 
-ATWIN_API void* atGetHashmap(AThashmap* m, uint8_t* key);
-ATWIN_API atErrorType atRemHashmap(AThashmap* m, uint8_t* key);
-ATWIN_API atErrorType atSetHashmap(AThashmap* m, uint8_t* key, void* value);
+ATWIN_API void* atGetHashmap(AThashmap* m, const char* key);
+ATWIN_API atErrorType atRemHashmap(AThashmap* m, const char* key);
+ATWIN_API atErrorType atSetHashmap(AThashmap* m, const char* key, void* value);
 
 

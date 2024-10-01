@@ -74,6 +74,13 @@ atErrorType _atInitEngine(void) {
     atInitIntArray(&ENGINE.resource.mesh_data.n_verts, rsrc_max, "mesh data [n verts]");
     
     ENGINE.resource.shader_data.count = 0;
+    
+    ENGINE.resource.shader_data.uniforms = (AThashmap**)malloc(rsrc_max * sizeof(AThashmap*));
+    if (!ENGINE.resource.shader_data.uniforms) {
+        atLogError("failed to allocate shader data uniform hashmap array");
+        return ERR_MALLOC;
+    }
+
     atInitIntArray(&ENGINE.resource.shader_data.program, rsrc_max, "shader data [program]");
     atInitIntArray(&ENGINE.resource.shader_data.n_uniforms, rsrc_max, "shader data [n uniforms]");
     atInitConstCharPointerArray(&ENGINE.resource.shader_data.vSrc, rsrc_max, 1024, "shader data [vSrc]");
@@ -110,8 +117,12 @@ atErrorType _atExitEngine(void) {
     free(ENGINE.resource.mesh_data.vao);
     free(ENGINE.resource.mesh_data.n_verts);
     
+    free(ENGINE.resource.shader_data.vSrc);
+    free(ENGINE.resource.shader_data.fSrc);
     free(ENGINE.resource.shader_data.program);
-    free(ENGINE.resource.shader_data.n_uniforms);
+    atForRangeI(ENGINE.resource.shader_data.count) {
+        atDestroyHashmap(ENGINE.resource.shader_data.uniforms[i]);
+    }; free(ENGINE.resource.shader_data.n_uniforms);
     
     free(ENGINE.resource.texture_data.src);
     free(ENGINE.resource.texture_data.title);

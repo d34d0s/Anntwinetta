@@ -107,3 +107,18 @@ int atglMakeShader(const char* vertexShader, const char* fragmentShader) {
 
     return program;
 }
+
+int atglGetUniformLocation(int program, const char* name) {
+    return glGetUniformLocation(program, name);
+}
+
+void atglSetUniformValue(ATuniformType type, int program, int location, void* value) {
+    switch (type) {
+        case UNIFORM_NONE: break;
+        case UNIFORM_VEC2: glUniform2fv(location, 1, value); break;
+        case UNIFORM_VEC3: glUniform3fv(location, 1, value); break;
+        case UNIFORM_VEC4: glUniform4fv(location, 1, value); break;
+        case UNIFORM_MAT4: glUniformMatrix4fv(location, 1, 0, value); break;
+        default: break;
+    }
+}

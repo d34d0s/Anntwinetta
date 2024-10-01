@@ -3,8 +3,9 @@
 char vertexShader[] = {
     "#version 430 core\n"
     "layout(location = 0) in vec3 uLocation;\n"
+    "uniform mat4 model;\n"
     "void main() {\n"
-    "   gl_Position = vec4(uLocation, 1.0f);\n"
+    "   gl_Position = model * vec4(uLocation, 1.0f);\n"
     "}"
 };
 
@@ -31,6 +32,9 @@ void main() {
     int shaderIndex = atMakeShader(vertexShader, fragShader);
     ATshaderLayout* shaderLayout = atGetShaderLayout(shaderIndex);
 
+    atMat4 model = atIdentity();
+    atMakeUniform(UNIFORM_MAT4, shaderIndex, "model", &model);
+
     while (atRunning()) {
         atDrawCall(DRAW_CLEAR, TRIANGLE_MODE);
         atPollEvents();
@@ -48,6 +52,8 @@ void main() {
             *meshLayout->vao,
             *meshLayout->n_verts
             );
+        
+        atSetUniform(UNIFORM_MAT4, shaderIndex, "model");
 
         atRender();
     }; atExit();

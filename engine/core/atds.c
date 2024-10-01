@@ -87,7 +87,7 @@ void* atPopArray(int index, ATarray* inArr) {
 HASHMAP
 
 */
-uint32_t atStringHash(uint8_t* buffer) {
+uint32_t atStringHash(const char* buffer) {
     uint32_t res = 0;
     size_t size = strlen(buffer);
     atForRangeI(size) {
@@ -120,7 +120,6 @@ void atDestroyHashmap(AThashmap* m) {
     m->count = 0;
     for (uint32_t i = 0; i < m->max; i++) {
         if (m->map[i]) {
-            free(m->map[i]->k);
             free(m->map[i]);
         }
     } free(m->map); free(m);
@@ -172,7 +171,7 @@ uint8_t atProbeHashmapR(AThashmap* m, uint32_t* kHash, const char* key) {
 }
 
 
-void* atGetHashmap(AThashmap* m, uint8_t* key) {
+void* atGetHashmap(AThashmap* m, const char* key) {
     if (!key) { return atTypeCastPtr(void, ERR_PROCESS); }
 
     uint32_t kHash = atStringHash(key) % m->max;
@@ -191,14 +190,14 @@ void* atGetHashmap(AThashmap* m, uint8_t* key) {
         
         if (!match) {
             atLogError("probing error | key [%s] is not set", key);
-            return key;
+            return atTypeCastPtr(void, ERR_PROCESS);
         }
         
         kvp = m->map[kHash];
     }; return kvp->v;
 }
 
-atErrorType atSetHashmap(AThashmap* m, uint8_t* key, void* value) {
+atErrorType atSetHashmap(AThashmap* m, const char* key, void* value) {
     if (!key || !value || m->count+1 > m->max) { return ERR_PROCESS; }
 
     uint32_t kHash = atStringHash(key) % m->max;
@@ -220,7 +219,7 @@ atErrorType atSetHashmap(AThashmap* m, uint8_t* key, void* value) {
         if (!set) set = atProbeHashmapR(m, &kHash, NULL);
 
         if (!set) {
-            atLogError("probing error");
+            atLogError("probing error | key[%s]", key);
             return ERR_MALLOC;
         }
     }
@@ -232,7 +231,7 @@ atErrorType atSetHashmap(AThashmap* m, uint8_t* key, void* value) {
     return ERR_NONE;
 }
 
-atErrorType atRemHashmap(AThashmap* m, uint8_t* key) {
+atErrorType atRemHashmap(AThashmap* m, const char* key) {
     if (!key) { return ERR_PROCESS; }
 
     uint32_t kHash = atStringHash(key) % m->max;
