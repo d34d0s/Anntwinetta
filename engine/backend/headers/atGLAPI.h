@@ -4,10 +4,10 @@
 #include "../../headers/attypes.h"
 #include "../../headers/athelpers.h"
 
-#include "../../vendor/SDL2/SDL.h"
-
-#include "../../vendor/GL/glew.h"   // TODO: REMOVE THIS ON RELEASE
-#ifdef _ATWIN_WINDOWS_
+#ifdef _ATWIN_WEB_
+    #include "../../vendor/GLES3/gl32.h"
+    #include "../../vendor/SDL2/SDL_opengles.h"
+#else
     #include "../../vendor/GL/glew.h"
 #endif
 

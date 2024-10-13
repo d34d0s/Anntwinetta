@@ -43,7 +43,7 @@ void atDrawCall(ATdrawCallType type, int glMode) {
     render_data->nCalls++;
 }
 
-void atDrawCallSelect(ATdrawCallType type, int glMode, int shader, int vao, int n_verts) {
+void atDrawCallSelect(ATdrawCallType type, int glMode, ATmeshLayout* meshLayout, ATshaderLayout* shaderLayout) {
     ATrenderData* render_data = _atGetRenderData();
     if (render_data->nCalls+1 > DRAW_CALL_MAX) {
         atLogError("max draw calls reached");
@@ -51,9 +51,9 @@ void atDrawCallSelect(ATdrawCallType type, int glMode, int shader, int vao, int 
     }
 
     ATdrawCall* dc = _atMakeDrawCall(type, glMode);
-    dc->vao = vao;
-    dc->shader = shader;
-    dc->n_verts = n_verts;
+    dc->vao = *meshLayout->vao;
+    dc->shader = *shaderLayout->program;
+    dc->n_verts = *meshLayout->n_verts;
     if (!dc) {
         atLogError("failed to create draw call");
         return;
@@ -63,8 +63,7 @@ void atDrawCallSelect(ATdrawCallType type, int glMode, int shader, int vao, int 
     render_data->nCalls++;
 }
 
-
-void atRender(void) {
+void atProcRender(void) {
     Anntwinetta* atwin = _atGetEngine();
     if (atRunProcess(atwin->internal.render_proc)) {
         atLogError("failed to run engine render process");
@@ -74,12 +73,32 @@ void atRender(void) {
 
 
 // external event+input API
-void atPollEvents(void) {
+void atProcEvents(void) {
     Anntwinetta* atwin = _atGetEngine();
     if (atRunProcess(atwin->internal.event_proc)) {
         atLogError("failed to run engine event process");
         return;
     };
+}
+
+
+// external camera API
+ATmat4* atGetProjMatrix(void) {
+    ATcameraData* cam = _atGetCameraData();
+    return &cam->proj;
+}
+
+ATmat4* atGetViewMatrix(void) {
+    ATcameraData* cam = _atGetCameraData();
+    return &cam->view;
+}
+
+void atProcCamera(void) {
+    Anntwinetta* atwin = _atGetEngine();
+    if (atRunProcess(atwin->internal.camera_proc)) {
+        atLogError("failed to run engine camera process");
+        return;
+    }
 }
 
 

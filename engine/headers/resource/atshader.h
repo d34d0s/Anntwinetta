@@ -21,7 +21,6 @@ typedef struct ATshaderLayout {
 } ATshaderLayout;
 
 typedef struct ATshaderData {
-    // TODO: Uniform hashmap!
     int count;
     int* program;
     int* n_uniforms;

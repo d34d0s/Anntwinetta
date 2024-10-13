@@ -5,6 +5,7 @@
 #include "attypes.h"
 #include "athelpers.h"
 #include "atprocess.h"
+#include "atversion.h"
 
 #include "resource/atwindow.h"
 
@@ -12,23 +13,21 @@
 #include "resource/atshader.h"
 #include "resource/attexture.h"
 
-#ifdef _ATWIN_WINDOWS_
-#endif
-
-#ifdef _ATWIN_EMSCRIPTEN_
-#endif
-
 #include "processes/atevent.h"
 #include "processes/atrender.h"
+#include "processes/atcamera.h"
 
 #include "../backend/headers/atGLAPI.h"
-#ifdef _ATWIN_GL_
-    #include "../backend/headers/atGLAPI.h"
-#endif
 
 typedef struct Anntwinetta {
+    struct info {
+        char version[100];
+    } info;
+
     struct state {
         int init;
+        ATmouseButton mouse[MAX_MOUSE_BUTTONS];
+        ATkeyboardKey keyboard[MAX_KEYBOARD_KEYS];
     } state;
     
     struct internal {
@@ -40,6 +39,9 @@ typedef struct Anntwinetta {
         ATprocess* render_proc;
         ATrenderData render_data;
         
+        ATprocess* camera_proc;
+        ATcameraData camera_data;
+
         // Clock for managing frame timing and FPS
         struct clock {
             float FPS;           // Current frames per second
@@ -112,3 +114,5 @@ ATrenderData* _atGetRenderData(void);
 
 ATmeshData* _atGetMeshData(void);
 ATshaderData* _atGetShaderData(void);
+
+ATcameraData* _atGetCameraData(void);

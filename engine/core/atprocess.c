@@ -29,6 +29,7 @@ atErrorType atDestroyProcess(ATprocess* p) {
     p->post=NULL;
     p->pid=-1;
     free(p);
+    return ERR_NONE;
 }
 
 atErrorType atRunProcess(ATprocess* p) {

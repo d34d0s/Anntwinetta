@@ -3,20 +3,23 @@
 static Anntwinetta ENGINE;
 
 atErrorType _atInitEngine(void) {
-    // _atwin_log_init("~Annwinetta~ | %s", ATWIN.ver);
+    sprintf(ENGINE.info.version, "%d.%d.%d+%d",
+        ATWIN_VERSION_MAJOR,
+        ATWIN_VERSION_MINOR,
+        ATWIN_VERSION_YEAR,
+        ATWIN_VERSION_PATCH
+    );
     
     if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO|SDL_INIT_EVENTS) < 0) {
         atLogFatal("failed to initialize SDL2"); return ERR_INIT;
     }
 
     ENGINE.resource.window = _atMakeWindow(800, 600, "~Anntwinetta~");
-    #ifdef _ATWIN_GL_
-        ENGINE.resource.context = atglCreateContext(ENGINE.resource.window->_sdlWin);
-        if (!ENGINE.resource.context) {
-            atLogError("failed to create engine OpenGL context");
-            return ERR_INIT;
-        }
-    #endif
+    ENGINE.resource.context = atglCreateContext(ENGINE.resource.window->_sdlWin);
+    if (!ENGINE.resource.context) {
+        atLogError("failed to create engine OpenGL context");
+        return ERR_INIT;
+    }
     
     ENGINE.internal.event_data.quit = 0;
     ENGINE.internal.event_data._sdlEvent = (SDL_Event*)malloc(sizeof(SDL_Event));
@@ -24,6 +27,7 @@ atErrorType _atInitEngine(void) {
         atLogFatal("failed to allocate SDL event structure"); return ERR_MALLOC;
     };
 
+    // event process
     ENGINE.internal.event_proc = atMakeProcess(
         &ENGINE.internal.event_data,
         _atPrepEvent,
@@ -33,6 +37,7 @@ atErrorType _atInitEngine(void) {
         atLogFatal("failed to create engine event process"); return ERR_MALLOC;
     };
 
+    // render process
     ENGINE.internal.render_proc = atMakeProcess(
         &ENGINE.internal.render_data,
         _atPrepRender,
@@ -42,12 +47,38 @@ atErrorType _atInitEngine(void) {
         atLogFatal("failed to create engine render process"); return ERR_MALLOC;
     };
 
+    // camera process
+    ENGINE.internal.camera_proc = atMakeProcess(
+        &ENGINE.internal.camera_data,
+        _atPrepCamera,
+        _atMainCamera,
+        _atPostCamera
+    ); if (!ENGINE.internal.camera_proc) {
+        atLogFatal("failed to create engine camera process"); return ERR_MALLOC;
+    };
+
+    // camera data init
+    ENGINE.internal.camera_data.near = 0.1f;
+    ENGINE.internal.camera_data.far = 1000.0f;
+    ENGINE.internal.camera_data.yaw = -90.0f;
+    ENGINE.internal.camera_data.pitch = 0.0f;
+    ENGINE.internal.camera_data.speed = 2.5f;
+    ENGINE.internal.camera_data.last_x = 0.0f;
+    ENGINE.internal.camera_data.last_y = 0.0f;
+    ENGINE.internal.camera_data.sensitivity = 0.1f;
+    ENGINE.internal.camera_data.fov = atToRadians(45.0f);
+    ENGINE.internal.camera_data.location = atNewVec3(0, 0, 3);
+    ENGINE.internal.camera_data.globalup = atNewVec3(0, 1, 0);
+    ENGINE.internal.camera_data.window = ENGINE.resource.window;
+    ENGINE.internal.camera_data.forward = atNewVec3(0.0f, 0.0f, -1.0f);
     
-    #ifdef _ATWIN_GL_
-        ENGINE.internal.render_data.glMode=GL_TRIANGLES;
-    #else
-        ENGINE.internal.render_data.glMode=0;
-    #endif
+    int w = ENGINE.resource.window->dimensions[0];
+    int h = ENGINE.resource.window->dimensions[1];
+    ENGINE.internal.camera_data.proj = atPerspective(ENGINE.internal.camera_data.fov, w / h, ENGINE.internal.camera_data.near, ENGINE.internal.camera_data.far);
+    ENGINE.internal.camera_data.view = atLookAt(ENGINE.internal.camera_data.location, atAddVec3(ENGINE.internal.camera_data.location, ENGINE.internal.camera_data.forward), ENGINE.internal.camera_data.up);
+    
+    // render data init
+    ENGINE.internal.render_data.glMode=TRIANGLE_MODE;
     ENGINE.internal.render_data.passes=0;
     ENGINE.internal.render_data.nCalls = 0;
     ENGINE.internal.render_data.clearColor[0] = 0.4;
@@ -61,7 +92,8 @@ atErrorType _atInitEngine(void) {
         return ERR_MALLOC;
     }
 
-    // resource data
+    // TODO: dynamic arrays!!!!
+    // resource data array size
     int rsrc_max = 100;
     
     ENGINE.resource.entity_data.count = 0;
@@ -92,6 +124,7 @@ atErrorType _atInitEngine(void) {
     atInitCharPointerArray(&ENGINE.resource.texture_data.title, rsrc_max, 256, "texture data [title]");
     atInitIntPointerArray(&ENGINE.resource.texture_data.dimensions, rsrc_max, 2, "texture data [dimensions]");
 
+    atLogInit("~Annwinetta~ | %s", ENGINE.info.version);
     atLogInfo("Platform:        %s", SDL_GetPlatform());
     atLogInfo("CPU Count:       %d", SDL_GetCPUCount());
     atLogInfo("System RAM:      %d MB", SDL_GetSystemRAM());
@@ -157,4 +190,7 @@ ATshaderData* _atGetShaderData(void) {
     return &ENGINE.resource.shader_data;
 }
 
+ATcameraData* _atGetCameraData(void) {
+    return &ENGINE.internal.camera_data;
+}
 

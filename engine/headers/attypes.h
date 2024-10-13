@@ -18,17 +18,32 @@
     #else
         #define ATWIN_API __declspec(dllimport)
     #endif
+#else
+    #ifdef _ATWIN_WEB_
+        #include "../vendor/emscripten/emscripten.h"
+        #define ATWIN_API __attribute__((used))
+    #else 
+        #define ATWIN_API
+    #endif
 #endif
 
-#ifdef _ATWIN_EMSCRIPTEN_
-    #define ATWIN_API __attribute__((used))
+#ifdef _ATWIN_WINDOWS_
+    #define atMainLoop(logic)       \
+        while (atRunning()) {       \
+            logic                   \
+        }; atExit();
+#else
+    #ifdef _ATWIN_WEB_
+        #define atMainLoop(logic)       \
+            void mainLoop(void) {       \
+                logic                   \
+            }; emscripten_set_main_loop(mainLoop);
+    #else
+        #define atMainLoop(logic)
+    #endif
 #endif
 
-#ifndef ATWIN_API
-    #define ATWIN_API
-#endif
-
-static int NULLV = -1;
+#define NOVALUE -1
 
 typedef unsigned char       b8;
 typedef unsigned short      b16;

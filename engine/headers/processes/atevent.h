@@ -19,7 +19,6 @@ typedef struct ATmouse {
     int LeftClick, RightClick, MiddleClick, X1, X2;
 } ATmouse;
 
-
 typedef struct ATkeyboardKey {
     bool isPressed;    /** Indicates if the key is currently pressed. */
     bool wasPressed;   /** Indicates if the key was pressed in the previous frame. */
@@ -36,6 +35,7 @@ typedef struct ATkeyboard {
         VOLUME_DOWN, MUTE, WWW, CALCULATOR, MY_COMPUTER, MAIL, MEDIA_SELECT, APP1, APP2;
 } ATkeyboard;
 
+// TODO: move to engine structure!!!
 static ATmouseButton atMouseState[MAX_MOUSE_BUTTONS] = {0};
 static ATkeyboardKey atKeyboardState[MAX_KEYBOARD_KEYS] = {0};
 
@@ -74,7 +74,6 @@ typedef struct ATeventData {
 
 void _atSyncMouse();
 void _atSyncKeyboard();
-atErrorType _atPrepEvent(void* d);
 
 atErrorType _atPrepEvent(void* d);
 atErrorType _atMainEvent(void* d);

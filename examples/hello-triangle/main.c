@@ -3,9 +3,11 @@
 char vertexShader[] = {
     "#version 430 core\n"
     "layout(location = 0) in vec3 uLocation;\n"
-    "uniform mat4 model;\n"
+    "uniform mat4 uModel;\n"
+    "uniform mat4 uView;\n"
+    "uniform mat4 uProj;\n"
     "void main() {\n"
-    "   gl_Position = model * vec4(uLocation, 1.0f);\n"
+    "   gl_Position = uProj * uView * uModel * vec4(uLocation, 1.0f);\n"
     "}"
 };
 
@@ -27,17 +29,19 @@ void main() {
     };
 
     int meshIndex = atMakeMesh(3, vertices);
-    ATmeshLayout* meshLayout = atGetMeshLayout(meshIndex) ;
+    ATmeshLayout* meshLayout = atGetMeshLayout(meshIndex);
     
     int shaderIndex = atMakeShader(vertexShader, fragShader);
     ATshaderLayout* shaderLayout = atGetShaderLayout(shaderIndex);
 
-    atMat4 model = atIdentity();
-    atMakeUniform(UNIFORM_MAT4, shaderIndex, "model", &model);
+    ATmat4 model = atIdentity();
+    atMakeUniform(UNIFORM_MAT4, shaderIndex, "uModel", &model);
+    atMakeUniform(UNIFORM_MAT4, shaderIndex, "uView", atGetViewMatrix());
+    atMakeUniform(UNIFORM_MAT4, shaderIndex, "uProj", atGetProjMatrix());
 
-    while (atRunning()) {
+    atMainLoop(
         atDrawCall(DRAW_CLEAR, TRIANGLE_MODE);
-        atPollEvents();
+        atProcEvents();
         
         if (atIsKeyPressed(atKeyboard.ESCAPE) || atIsKeyPressed(atKeyboard.F12)) atExit();
 
@@ -45,16 +49,17 @@ void main() {
         if (atIsKeyTriggered(atKeyboard.G)) atClearColor(0, 255, 0, 255);
         if (atIsKeyTriggered(atKeyboard.B)) atClearColor(0, 0, 255, 255);
 
+        atSetUniform(UNIFORM_MAT4, shaderIndex, "uModel");
+        atSetUniform(UNIFORM_MAT4, shaderIndex, "uView");
+        atSetUniform(UNIFORM_MAT4, shaderIndex, "uProj");
         atDrawCallSelect(
             DRAW_MESH,
             TRIANGLE_MODE,
-            *shaderLayout->program,
-            *meshLayout->vao,
-            *meshLayout->n_verts
-            );
+            meshLayout,
+            shaderLayout
+        );
         
-        atSetUniform(UNIFORM_MAT4, shaderIndex, "model");
-
-        atRender();
-    }; atExit();
+        atProcCamera();
+        atProcRender();
+    ); atExit();
 }
