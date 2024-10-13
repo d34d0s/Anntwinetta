@@ -12,7 +12,7 @@ int _atSetShaderData(ATshaderData* d, const char* vertex, const char* fragment) 
     ); return index;
 }
 
-atErrorType _atSetShaderUniform(ATshaderData* d, int index, ATuniformType type, const char* name, void* value) {
+ATerrorType _atSetShaderUniform(ATshaderData* d, int index, ATuniformType type, const char* name, void* value) {
     if (index < 0 || index >= d->count) { return ERR_SHADER; }
     
     int n_uniforms = d->n_uniforms[index];

@@ -2,9 +2,10 @@
 
 #include "atengine.h"
 
-ATWIN_API atErrorType atInit(void);
-ATWIN_API atErrorType atRunning(void);
-ATWIN_API atErrorType atExit(void);
+ATWIN_API ATerrorType atInit(void);
+ATWIN_API ATerrorType atRunning(void);
+ATWIN_API ATerrorType atClockTick(void);
+ATWIN_API ATerrorType atExit(void);
 
 ATWIN_API void atProcEvents(void);
 ATWIN_API void atProcRender(void);
@@ -23,10 +24,26 @@ ATWIN_API int atMakeShader(const char* vertex, const char* fragment);
 ATWIN_API ATshaderLayout* atGetShaderLayout(int index);
 ATWIN_API void atDestroyShaderLayout(ATshaderLayout* layout);
 
-ATWIN_API atErrorType atMakeUniform(ATuniformType type, int shaderIndex, const char* name, void* value);
+ATWIN_API ATerrorType atMakeUniform(ATuniformType type, int shaderIndex, const char* name, void* value);
 ATWIN_API ATuniformLayout* atGetUniformLayout(int shaderIndex, const char* name);
 ATWIN_API void atSetUniform(ATuniformType type, int shaderIndex, const char* name);
 
+// external event API
+ATWIN_API bool atIsKeyPressed(ATkeyboardKey key);
+ATWIN_API bool atIsKeyTriggered(ATkeyboardKey key);
+ATWIN_API bool atIsKeyReleased(ATkeyboardKey key);
+ATWIN_API bool atIsMouseButtonPressed(ATmouseButton button);
+ATWIN_API bool atIsMouseButtonTriggered(ATmouseButton button);
+ATWIN_API bool atIsMouseButtonReleased(ATmouseButton button);
+
 // external Camera API
-ATWIN_API ATmat4* atGetProjMatrix(void);
-ATWIN_API ATmat4* atGetViewMatrix(void);
+ATWIN_API void atCamUp(void);
+ATWIN_API void atCamIn(void);
+ATWIN_API void atCamOut(void);
+ATWIN_API void atCamLeft(void);
+ATWIN_API void atCamDown(void);
+ATWIN_API void atCamRight(void);
+ATWIN_API ATmat4* atGetCamProj(void);
+ATWIN_API ATmat4* atGetCamView(void);
+ATWIN_API ATvec3* atGetCamLocation(void);
+ATWIN_API void atSetCamMode(ATcamMode mode);

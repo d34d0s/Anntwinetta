@@ -33,5 +33,5 @@ int _atSetShaderData(ATshaderData* d, const char* vertex, const char* fragment);
 ATshaderLayout* _atGetShaderLayout(ATshaderData* d, int index);
 void _atDestroyShaderLayout(ATshaderLayout* l);
 
-atErrorType _atSetShaderUniform(ATshaderData* d, int index, ATuniformType type, const char* name, void* value);
+ATerrorType _atSetShaderUniform(ATshaderData* d, int index, ATuniformType type, const char* name, void* value);
 ATuniformLayout* _atGetShaderUniform(ATshaderData* d, int index, const char* name);

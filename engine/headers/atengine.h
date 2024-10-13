@@ -7,6 +7,7 @@
 #include "atprocess.h"
 #include "atversion.h"
 
+#include "resource/atclock.h"
 #include "resource/atwindow.h"
 
 #include "resource/atmesh.h"
@@ -26,13 +27,10 @@ typedef struct Anntwinetta {
 
     struct state {
         int init;
-        ATmouseButton mouse[MAX_MOUSE_BUTTONS];
-        ATkeyboardKey keyboard[MAX_KEYBOARD_KEYS];
     } state;
     
     struct internal {
         int errors;
-        
         ATprocess* event_proc;
         ATeventData event_data;
         
@@ -41,22 +39,12 @@ typedef struct Anntwinetta {
         
         ATprocess* camera_proc;
         ATcameraData camera_data;
-
-        // Clock for managing frame timing and FPS
-        struct clock {
-            float FPS;           // Current frames per second
-            float TPF;           // Time per frame in milliseconds
-            int maxFPS;          // Target maximum frames per second
-            int lastTime;        // Last update time in milliseconds
-            int currentTime;     // Current time in milliseconds
-            float deltaTime;     // Time since last frame in seconds
-            float frameCount;    // Frames since last update
-        } clock;
-
     } internal;
 
     struct resource {
         int total;
+        ATclock clock;
+
         ATwindow* window;
         ATGLcontext* context;
 
@@ -104,15 +92,12 @@ typedef struct Anntwinetta {
 
 
 // initialize the internal engine structure
-atErrorType _atInitEngine(void);
-atErrorType _atExitEngine(void);
+ATerrorType _atInitEngine(void);
+ATerrorType _atExitEngine(void);
 
 // internal getters/setters
+ATclock* _atGetClock(void);
 Anntwinetta* _atGetEngine(void);
-ATeventData* _atGetEventData(void);
-ATrenderData* _atGetRenderData(void);
-
 ATmeshData* _atGetMeshData(void);
 ATshaderData* _atGetShaderData(void);
-
-ATcameraData* _atGetCameraData(void);
+float _atGetDeltaTime(void);

@@ -29,7 +29,7 @@ void _atDestroyDrawCall(ATdrawCall* dc) {
 
 
 // render process
-atErrorType _atPrepRender(void* d) {
+ATerrorType _atPrepRender(void* d) {
     ATrenderData* render_data = atTypeCastPtr(ATrenderData, d);
 
     if (render_data->nCalls <= 0) { return ERR_NONE; }
@@ -43,7 +43,7 @@ atErrorType _atPrepRender(void* d) {
     return ERR_NONE;
 }
 
-atErrorType _atMainRender(void* d) {
+ATerrorType _atMainRender(void* d) {
     ATrenderData* render_data = atTypeCastPtr(ATrenderData, d);
     
     if (render_data->nCalls <= 0) {
@@ -83,8 +83,9 @@ atErrorType _atMainRender(void* d) {
     return ERR_NONE;
 }
 
-atErrorType _atPostRender(void* d) {
+ATerrorType _atPostRender(void* d) {
     ATrenderData* render_data = atTypeCastPtr(ATrenderData, d);
-    SDL_GL_SwapWindow(render_data->windowPtr->_sdlWin);
+    // SDL_GL_SwapWindow(render_data->windowPtr->_sdlWin);
+    glfwSwapBuffers(render_data->windowPtr->_glfwWin);
     return ERR_NONE;
 }

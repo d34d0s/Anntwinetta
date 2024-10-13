@@ -1,29 +1,22 @@
 #include "../headers/atGLAPI.h"
 
-ATGLcontext* atglCreateContext(SDL_Window* w) {
+ATGLcontext* atglCreateContext(GLFWwindow* w) {
     ATGLcontext* ctx = (ATGLcontext*)malloc(sizeof(ATGLcontext));
     
     if (!ctx) {
-        atLogError("failed to allocate OpenGL context");
-        return atTypeCastPtr(ATGLcontext, ERR_MALLOC);
-    }
-    
-    ctx->GL = SDL_GL_CreateContext(w);
-    SDL_GL_MakeCurrent(w, ctx->GL);
-    
-    if (!ctx) {
         atLogError("failed to create OpenGL context");
-        free(ctx);
         return atTypeCastPtr(ATGLcontext, ERR_INIT);
     }; ctx->init = 1;
-
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+    
+    glfwMakeContextCurrent(w);
+    
+    glfwWindowHint(GLFW_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     
     // enable double buffering with a 24bit Z buffer
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+    glfwSetWindowAttrib(w, GLFW_DOUBLEBUFFER, 1);
+    glfwSetWindowAttrib(w, GLFW_DEPTH_BITS, 24);
 
     #ifdef _ATWIN_WINDOWS_
         if (glewInit() != ERR_NONE) {
@@ -48,9 +41,8 @@ ATGLcontext* atglCreateContext(SDL_Window* w) {
     return ctx;
 }
 
-atErrorType atglDestroyContext(ATGLcontext* ctx) {
+ATerrorType atglDestroyContext(ATGLcontext* ctx) {
     if (!ctx) { return ERR_TYPE; }
-    SDL_GL_DeleteContext(ctx->GL);
     free(ctx);
     return ERR_NONE;
 }

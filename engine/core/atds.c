@@ -31,9 +31,9 @@ void atDestroyArray(ATarray* inArr) {
     free(inArr);
 }
 
-atErrorType atResizeArray(ATarray* inArr) {
+ATerrorType atResizeArray(ATarray* inArr) {
     int resize = 10;
-    atErrorType err = ERR_NONE;
+    ATerrorType err = ERR_NONE;
     
     void** temp = (void**)realloc(inArr->arr, inArr->max+resize * sizeof(void*));
     if (!temp) {
@@ -46,8 +46,8 @@ atErrorType atResizeArray(ATarray* inArr) {
     return err;
 }
 
-atErrorType atInsertArray(int index, ATarray* inArr, void* inData) {
-    atErrorType err = ERR_NONE;
+ATerrorType atInsertArray(int index, ATarray* inArr, void* inData) {
+    ATerrorType err = ERR_NONE;
     if (!inArr || index < 0) { return err; }
 
     if (index > inArr->max || inArr->count+1 >= inArr->max) {
@@ -60,7 +60,7 @@ atErrorType atInsertArray(int index, ATarray* inArr, void* inData) {
 }
 
 void* atPopArray(int index, ATarray* inArr) {
-    atErrorType err = ERR_NONE;
+    ATerrorType err = ERR_NONE;
     if (!inArr || index > inArr->max || index > inArr->count) { return atTypeCastPtr(void, err); }
 
     void* value;
@@ -197,7 +197,7 @@ void* atGetHashmap(AThashmap* m, const char* key) {
     }; return kvp->v;
 }
 
-atErrorType atSetHashmap(AThashmap* m, const char* key, void* value) {
+ATerrorType atSetHashmap(AThashmap* m, const char* key, void* value) {
     if (!key || !value || m->count+1 > m->max) { return ERR_PROCESS; }
 
     uint32_t kHash = atStringHash(key) % m->max;
@@ -231,7 +231,7 @@ atErrorType atSetHashmap(AThashmap* m, const char* key, void* value) {
     return ERR_NONE;
 }
 
-atErrorType atRemHashmap(AThashmap* m, const char* key) {
+ATerrorType atRemHashmap(AThashmap* m, const char* key) {
     if (!key) { return ERR_PROCESS; }
 
     uint32_t kHash = atStringHash(key) % m->max;

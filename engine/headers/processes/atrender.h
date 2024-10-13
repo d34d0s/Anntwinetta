@@ -3,11 +3,11 @@
 #include "../attypes.h"
 #include "../athelpers.h"
 
-#include "../resource/atwindow.h"
-
 #include  "../../vendor/SDL2/SDL.h"
 
 #include "../../backend/headers/atGLAPI.h"
+
+#include "../resource/atwindow.h"
 
 #define DRAW_CALL_MAX 1024
 
@@ -40,10 +40,11 @@ typedef struct ATrenderData {
     float clearColor[4];
     ATdrawCall** drawCallArr;
 } ATrenderData;
+ATrenderData* _atGetRenderData(void);
 
 void _atDestroyDrawCall(ATdrawCall* dc);
 ATdrawCall* _atMakeDrawCall(ATdrawCallType type, int glMode);
 
-atErrorType _atPrepRender(void*);
-atErrorType _atMainRender(void*);
-atErrorType _atPostRender(void*);
+ATerrorType _atPrepRender(void*);
+ATerrorType _atMainRender(void*);
+ATerrorType _atPostRender(void*);

@@ -2,7 +2,7 @@
 
 static Anntwinetta ENGINE;
 
-atErrorType _atInitEngine(void) {
+ATerrorType _atInitEngine(void) {
     sprintf(ENGINE.info.version, "%d.%d.%d+%d",
         ATWIN_VERSION_MAJOR,
         ATWIN_VERSION_MINOR,
@@ -10,23 +10,26 @@ atErrorType _atInitEngine(void) {
         ATWIN_VERSION_PATCH
     );
     
-    if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO|SDL_INIT_EVENTS) < 0) {
+    if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO) < 0) {
         atLogFatal("failed to initialize SDL2"); return ERR_INIT;
     }
 
+    if (!glfwInit()) {
+        atLogFatal("failed to initialize GLFW");
+        return ERR_INIT;
+    }
+
+    ENGINE.resource.clock = _atMakeClock(1000.0f);
+
     ENGINE.resource.window = _atMakeWindow(800, 600, "~Anntwinetta~");
-    ENGINE.resource.context = atglCreateContext(ENGINE.resource.window->_sdlWin);
+    
+    ENGINE.resource.context = atglCreateContext(ENGINE.resource.window->_glfwWin);
+
     if (!ENGINE.resource.context) {
         atLogError("failed to create engine OpenGL context");
         return ERR_INIT;
     }
     
-    ENGINE.internal.event_data.quit = 0;
-    ENGINE.internal.event_data._sdlEvent = (SDL_Event*)malloc(sizeof(SDL_Event));
-    if (!ENGINE.internal.event_data._sdlEvent) {
-        atLogFatal("failed to allocate SDL event structure"); return ERR_MALLOC;
-    };
-
     // event process
     ENGINE.internal.event_proc = atMakeProcess(
         &ENGINE.internal.event_data,
@@ -57,27 +60,38 @@ atErrorType _atInitEngine(void) {
         atLogFatal("failed to create engine camera process"); return ERR_MALLOC;
     };
 
+    // event data init
+    ENGINE.internal.event_data.quit = 0;
+    _atInitEventData(&ENGINE.internal.event_data);
+    ENGINE.internal.event_data.windowPtr = ENGINE.resource.window->_glfwWin;
+
+
     // camera data init
-    ENGINE.internal.camera_data.near = 0.1f;
-    ENGINE.internal.camera_data.far = 1000.0f;
-    ENGINE.internal.camera_data.yaw = -90.0f;
-    ENGINE.internal.camera_data.pitch = 0.0f;
-    ENGINE.internal.camera_data.speed = 2.5f;
-    ENGINE.internal.camera_data.last_x = 0.0f;
-    ENGINE.internal.camera_data.last_y = 0.0f;
-    ENGINE.internal.camera_data.sensitivity = 0.1f;
-    ENGINE.internal.camera_data.fov = atToRadians(45.0f);
-    ENGINE.internal.camera_data.location = atNewVec3(0, 0, 3);
-    ENGINE.internal.camera_data.globalup = atNewVec3(0, 1, 0);
-    ENGINE.internal.camera_data.window = ENGINE.resource.window;
-    ENGINE.internal.camera_data.forward = atNewVec3(0.0f, 0.0f, -1.0f);
+    // TODO: make _atInitCameraData()!!!
+    ENGINE.internal.camera_data.windowPtr = ENGINE.resource.window;
+    
+    ENGINE.internal.camera_data.camState.last_x = 0.0f;
+    ENGINE.internal.camera_data.camState.last_y = 0.0f;
+    
+    ENGINE.internal.camera_data.camSettings.yaw = -90.0f;
+    ENGINE.internal.camera_data.camSettings.pitch = 0.0f;
+    ENGINE.internal.camera_data.camSettings.far = 1000.0f;
+    ENGINE.internal.camera_data.camSettings.near = 0.1f;
+    ENGINE.internal.camera_data.camSettings.fov = atToRadians(45.0f);
+    ENGINE.internal.camera_data.camSettings.speed = 2.5f;
+    ENGINE.internal.camera_data.camSettings.sensitivity = 0.1f;
+    ENGINE.internal.camera_data.camSettings.globalup = atNewVec3(0, 1, 0);
+    
+    ENGINE.internal.camera_data.camState.forward = atNewVec3(0.0f, 0.0f, -1.0f);
+    ENGINE.internal.camera_data.camState.location = atNewVec3(0, 0, 3);
     
     int w = ENGINE.resource.window->dimensions[0];
     int h = ENGINE.resource.window->dimensions[1];
-    ENGINE.internal.camera_data.proj = atPerspective(ENGINE.internal.camera_data.fov, w / h, ENGINE.internal.camera_data.near, ENGINE.internal.camera_data.far);
-    ENGINE.internal.camera_data.view = atLookAt(ENGINE.internal.camera_data.location, atAddVec3(ENGINE.internal.camera_data.location, ENGINE.internal.camera_data.forward), ENGINE.internal.camera_data.up);
+    ENGINE.internal.camera_data.camState.proj = atPerspective(ENGINE.internal.camera_data.camSettings.fov, w / h, ENGINE.internal.camera_data.camSettings.near, ENGINE.internal.camera_data.camSettings.far);
+    ENGINE.internal.camera_data.camState.view = atLookAt(ENGINE.internal.camera_data.camState.location, atAddVec3(ENGINE.internal.camera_data.camState.location, ENGINE.internal.camera_data.camState.forward), ENGINE.internal.camera_data.camState.up);
     
     // render data init
+    // TODO: make _atInitRenderData()!!!
     ENGINE.internal.render_data.glMode=TRIANGLE_MODE;
     ENGINE.internal.render_data.passes=0;
     ENGINE.internal.render_data.nCalls = 0;
@@ -132,7 +146,7 @@ atErrorType _atInitEngine(void) {
     return ERR_NONE;
 }
 
-atErrorType _atExitEngine(void) {
+ATerrorType _atExitEngine(void) {
     SDL_Quit();
     
     _atDestroyWindow(ENGINE.resource.window);
@@ -162,7 +176,6 @@ atErrorType _atExitEngine(void) {
     free(ENGINE.resource.texture_data.n_channels);
     free(ENGINE.resource.texture_data.dimensions);
     
-    free(ENGINE.internal.event_data._sdlEvent);
     free(ENGINE.internal.render_data.drawCallArr);
 
     return ERR_NONE;
@@ -172,6 +185,14 @@ atErrorType _atExitEngine(void) {
 // internal getters/setters
 Anntwinetta* _atGetEngine(void) {
     return &ENGINE;
+}
+
+ATclock* _atGetClock(void) {
+    return &ENGINE.resource.clock;
+}
+
+float _atGetDeltaTime(void) {
+    return ENGINE.resource.clock.delta;
 }
 
 ATeventData* _atGetEventData(void) {

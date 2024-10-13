@@ -23,9 +23,9 @@ typedef struct AThashmap {
 //dynamic array
 ATWIN_API ATarray* atMakeArray(int max);
 ATWIN_API void atDestroyArray(ATarray* inArr);
-ATWIN_API atErrorType atResizeArray(ATarray* inArr);
+ATWIN_API ATerrorType atResizeArray(ATarray* inArr);
 ATWIN_API void* atPopArray(int index, ATarray* inArr);
-ATWIN_API atErrorType atInsertArray(int index, ATarray* inArr, void* inData);
+ATWIN_API ATerrorType atInsertArray(int index, ATarray* inArr, void* inData);
 
 
 // hashmap
@@ -37,7 +37,7 @@ ATWIN_API uint8_t atProbeHashmapF(AThashmap* m, uint32_t* kHash, const char* key
 ATWIN_API uint8_t atProbeHashmapR(AThashmap* m, uint32_t* kHash, const char* key);
 
 ATWIN_API void* atGetHashmap(AThashmap* m, const char* key);
-ATWIN_API atErrorType atRemHashmap(AThashmap* m, const char* key);
-ATWIN_API atErrorType atSetHashmap(AThashmap* m, const char* key, void* value);
+ATWIN_API ATerrorType atRemHashmap(AThashmap* m, const char* key);
+ATWIN_API ATerrorType atSetHashmap(AThashmap* m, const char* key, void* value);
 
 

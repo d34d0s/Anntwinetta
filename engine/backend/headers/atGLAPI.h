@@ -11,6 +11,8 @@
     #include "../../vendor/GL/glew.h"
 #endif
 
+#include "../../vendor/GLFW/glfw3.h"
+
 typedef enum ATuniformType {
     UNIFORM_NONE=0,
     UNIFORM_VEC2,
@@ -22,11 +24,10 @@ typedef enum ATuniformType {
 
 typedef struct ATGLcontext {
     b8 init;
-    SDL_GLContext* GL;
 } ATGLcontext;
 
-ATGLcontext* atglCreateContext(SDL_Window* w);
-atErrorType atglDestroyContext(ATGLcontext* ctx);
+ATGLcontext* atglCreateContext(GLFWwindow* w);
+ATerrorType atglDestroyContext(ATGLcontext* ctx);
 
 int atglMakeVBO(int n_verts, int attrs, float* vertices);
 int atglMakeVAO(int vbo, int n_verts, int attrs);

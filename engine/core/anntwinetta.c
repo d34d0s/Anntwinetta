@@ -1,18 +1,23 @@
 #include "../headers/anntwinetta.h"
 
-atErrorType atInit(void) {
-    atErrorType err = _atInitEngine();
+ATerrorType atInit(void) {
+    ATerrorType err = _atInitEngine();
     atClearColor(120, 82, 150, 255);
     return err;
 }
 
-atErrorType atRunning(void) {
+ATerrorType atRunning(void) {
     Anntwinetta* atwin = _atGetEngine();
     return !atwin->internal.event_data.quit;
 }
 
-atErrorType atExit(void) {
-    atErrorType err = _atExitEngine();
+ATerrorType atClockTick(void) {
+    ATclock* clock = _atGetClock();
+    _atClockTick(clock);
+}
+
+ATerrorType atExit(void) {
+    ATerrorType err = _atExitEngine();
     return err;
 }
 
@@ -73,6 +78,37 @@ void atProcRender(void) {
 
 
 // external event+input API
+bool atIsKeyPressed(ATkeyboardKey key) {
+    ATeventData* event = _atGetEventData();
+    return _atIsKeyPressed(event, key);
+}
+
+bool atIsKeyTriggered(ATkeyboardKey key) {
+    ATeventData* event = _atGetEventData();
+    return _atIsKeyTriggered(event, key);
+}
+
+bool atIsKeyReleased(ATkeyboardKey key) {
+    ATeventData* event = _atGetEventData();
+    return _atIsKeyReleased(event, key);
+}
+
+bool atIsMouseButtonPressed(ATmouseButton button) {
+    ATeventData* event = _atGetEventData();
+    return _atIsMouseButtonPressed(event, button);
+}
+
+bool atIsMouseButtonTriggered(ATmouseButton button) {
+    ATeventData* event = _atGetEventData();
+    return _atIsMouseButtonTriggered(event, button);
+}
+
+bool atIsMouseButtonReleased(ATmouseButton button) {
+    ATeventData* event = _atGetEventData();
+    return _atIsMouseButtonReleased(event, button);
+}
+
+
 void atProcEvents(void) {
     Anntwinetta* atwin = _atGetEngine();
     if (atRunProcess(atwin->internal.event_proc)) {
@@ -83,14 +119,54 @@ void atProcEvents(void) {
 
 
 // external camera API
-ATmat4* atGetProjMatrix(void) {
+ATmat4* atGetCamProj(void) {
     ATcameraData* cam = _atGetCameraData();
-    return &cam->proj;
+    return &cam->camState.proj;
 }
 
-ATmat4* atGetViewMatrix(void) {
+ATmat4* atGetCamView(void) {
     ATcameraData* cam = _atGetCameraData();
-    return &cam->view;
+    return &cam->camState.view;
+}
+
+ATvec3* atGetCamLocation(void) {
+    ATcameraData* cam = _atGetCameraData();
+    return &cam->camState.location;
+}
+
+void atSetCamMode(ATcamMode mode) {
+    ATcameraData* cam = _atGetCameraData();
+    _atSetCamMode(cam, mode);
+}
+
+void atCamUp(void) {
+    ATcameraData* cam = _atGetCameraData();
+    _atCamMovUp(cam, _atGetDeltaTime());
+}
+
+void atCamIn(void) {
+    ATcameraData* cam = _atGetCameraData();
+    _atCamMovIn(cam, _atGetDeltaTime());
+}
+
+void atCamOut(void) {
+    ATcameraData* cam = _atGetCameraData();
+    _atCamMovOut(cam, _atGetDeltaTime());
+}
+
+void atCamLeft(void) {
+    ATcameraData* cam = _atGetCameraData();
+    _atCamMovLeft(cam, _atGetDeltaTime());
+}
+
+void atCamDown(void) {
+    ATcameraData* cam = _atGetCameraData();
+    _atCamMovDown(cam, _atGetDeltaTime());
+}
+
+void atCamRight(void) {
+    ATcameraData* cam = _atGetCameraData();
+    _atCamMovRight(cam, _atGetDeltaTime());
 }
 
 void atProcCamera(void) {
@@ -134,7 +210,7 @@ void atDestroyShaderLayout(ATshaderLayout* layout) {
     _atDestroyShaderLayout(layout);
 }
 
-atErrorType atMakeUniform(ATuniformType type, int shaderIndex, const char* name, void* value) {
+ATerrorType atMakeUniform(ATuniformType type, int shaderIndex, const char* name, void* value) {
     ATshaderData* shader_data = _atGetShaderData();
     return _atSetShaderUniform(shader_data, shaderIndex, type, name, value);
 }

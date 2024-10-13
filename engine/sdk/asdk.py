@@ -39,14 +39,11 @@ def install(args:argparse.Namespace) -> None:
         os.remove(f'{install_dir}/Anntwinetta_{at_version}.zip')
         os.system(f'setx ATWIN_DIR {install_dir}\\Anntwinetta_{at_version}'); os.environ['ATWIN_DIR']=f'{install_dir}\\Anntwinetta_{at_version}'
         os.system(f'setx C_INCLUDE_PATH {os.environ.get('C_INCLUDE_PATH', '')}{install_dir}\\Anntwinetta_{at_version}\\engine\\headers;')
-        if load_DLL():
-            print(f'Anntwinetta v{at_version} Installed Successfully At: {install_dir}')
 
     elif args.repo:
         os.system(f'git clone -b {args.repo} https://github.com/F4R4W4Y/Anntwinetta.git {install_dir}')
         os.system(f'setx ATWIN_DIR {install_dir}'); os.environ['ATWIN_DIR']=f'{install_dir}'
         os.system(f'setx C_INCLUDE_PATH {os.environ.get('C_INCLUDE_PATH', '')}{install_dir}\\engine\\headers;')
-        if load_DLL(): print(f'Anntwinetta Repo Cloned Successfully To: {install_dir}')
 
     elif args.dev:
         if os.path.exists(install_dir):
@@ -56,7 +53,8 @@ def install(args:argparse.Namespace) -> None:
             os.system(f'setx ATWIN_DIR {install_dir}\\Anntwinetta_{args.dev}_devkit'); os.environ['ATWIN_DIR']=f'{install_dir}\\Anntwinetta_{args.dev}_devkit'
             os.system(f'setx C_INCLUDE_PATH {os.environ.get('C_INCLUDE_PATH', '')}{install_dir}\\Anntwinetta_{args.dev}_devkit\\engine\\headers;')
 
-        if load_DLL(): print(f'Anntwinetta DevKit v{args.dev} Installed Successfully At: {install_dir}')
+    build_windows()
+    if load_DLL(): print(f'Anntwinetta Installed + Built Successfully At: {install_dir}')
 
 
 """
@@ -108,6 +106,7 @@ def build_windows() -> None:
         f'-shared '
         f'{o_files} '
         f'-lSDL2 '
+        f'-lglfw3 '
         f'-luser32 '
         f'-lglew32 '
         f'-lopengl32 '
@@ -180,6 +179,11 @@ def main() -> None:
 
     ldll_cmd=subparsers.add_parser(name='ldll', help='Tests Anntwinetta\'s DLL by loading and initializing the engine')
     
+    install_cmd=subparsers.add_parser(name='install', help='Install a tagged release of Lotus')
+    install_cmd.add_argument('-ver', required=False, help='Install a specific version of Lotus')
+    install_cmd.add_argument('-repo', required=False, help='Clone A Branch Of The Anntwinetta Repo')
+    install_cmd.add_argument('-dev', required=False, help='Install a specific version of Anntwinetta\'s devkits')
+
     build_cmd=subparsers.add_parser(name='build', help='Build Anntwinetta or your own project')
     build_cmd.add_argument('-engine', choices=['win', ], required=False, help='Target Engine Source Compilation')
     build_cmd.add_argument('-project', choices=['win', ], required=False, help='Target Engine Source Compilation')
@@ -189,5 +193,7 @@ def main() -> None:
     match args.command:
         case 'ldll': load_DLL()
         case 'build': build(args)
+        case 'install': install(args)
+
 
 if __name__ == '__main__': main()

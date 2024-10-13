@@ -1,8 +1,8 @@
 #include "../headers/atprocess.h"
 
-atErrorType PROCESS_PREP_DEFAULT(void* d) { return ERR_NONE; }
-atErrorType PROCESS_MAIN_DEFAULT(void* d) { return ERR_NONE; }
-atErrorType PROCESS_POST_DEFAULT(void* d) { return ERR_NONE; }
+ATerrorType PROCESS_PREP_DEFAULT(void* d) { return ERR_NONE; }
+ATerrorType PROCESS_MAIN_DEFAULT(void* d) { return ERR_NONE; }
+ATerrorType PROCESS_POST_DEFAULT(void* d) { return ERR_NONE; }
 
 ATprocess* atMakeProcess(void* d, _process_prep_ptr prep, _process_main_ptr main, _process_post_ptr post) {
     static int n_process = 0;
@@ -22,7 +22,7 @@ ATprocess* atMakeProcess(void* d, _process_prep_ptr prep, _process_main_ptr main
     return p;
 }
 
-atErrorType atDestroyProcess(ATprocess* p) {
+ATerrorType atDestroyProcess(ATprocess* p) {
     p->data=NULL;
     p->prep=NULL;
     p->main=NULL;
@@ -32,7 +32,7 @@ atErrorType atDestroyProcess(ATprocess* p) {
     return ERR_NONE;
 }
 
-atErrorType atRunProcess(ATprocess* p) {
+ATerrorType atRunProcess(ATprocess* p) {
     int err = p->prep(p->data);
     if (err) { atLogError("process 'prep' failed to run | aborting process"); return err; }
 

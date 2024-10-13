@@ -15,12 +15,13 @@ char fragShader[] = {
     "#version 430 core\n"
     "out vec3 fragColor;\n"
     "void main() {\n"
-    "   fragColor = vec3(1.0f, 1.0f, 1.0f);\n"
+    "   fragColor = vec3(0.3f, 0.6f, 0.4f);\n"
     "}"
 };
 
 void main() {
     atInit();
+    atSetCamMode(FREELOOK_MODE);
    
     float vertices[] = {
         -0.5, -0.5, 0.5,
@@ -36,22 +37,34 @@ void main() {
 
     ATmat4 model = atIdentity();
     atMakeUniform(UNIFORM_MAT4, shaderIndex, "uModel", &model);
-    atMakeUniform(UNIFORM_MAT4, shaderIndex, "uView", atGetViewMatrix());
-    atMakeUniform(UNIFORM_MAT4, shaderIndex, "uProj", atGetProjMatrix());
+    atMakeUniform(UNIFORM_MAT4, shaderIndex, "uView", atGetCamView());
+    atMakeUniform(UNIFORM_MAT4, shaderIndex, "uProj", atGetCamProj());
 
     atMainLoop(
         atDrawCall(DRAW_CLEAR, TRIANGLE_MODE);
         atProcEvents();
         
-        if (atIsKeyPressed(atKeyboard.ESCAPE) || atIsKeyPressed(atKeyboard.F12)) atExit();
+        if (atIsKeyPressed(KEY_ESCAPE) || atIsKeyPressed(KEY_F12)) atExit();
 
-        if (atIsKeyTriggered(atKeyboard.R)) atClearColor(255, 0, 0, 255);
-        if (atIsKeyTriggered(atKeyboard.G)) atClearColor(0, 255, 0, 255);
-        if (atIsKeyTriggered(atKeyboard.B)) atClearColor(0, 0, 255, 255);
+        // change the "background" color
+        if (atIsKeyTriggered(KEY_R)) atClearColor(255, 0, 0, 255);
+        if (atIsKeyTriggered(KEY_G)) atClearColor(0, 255, 0, 255);
+        if (atIsKeyTriggered(KEY_B)) atClearColor(0, 0, 255, 255);
+        
+        // move the "camera"
+        if (atIsKeyPressed(KEY_W)) atCamIn();
+        if (atIsKeyPressed(KEY_S)) atCamOut();
+        if (atIsKeyPressed(KEY_A)) atCamLeft();
+        if (atIsKeyPressed(KEY_D)) atCamRight();
+        if (atIsKeyPressed(KEY_SPACE)) atCamUp();
+        if (atIsKeyPressed(KEY_LEFT_SHIFT)) atCamDown();
 
+        // set shader uniforms before sending a draw call
         atSetUniform(UNIFORM_MAT4, shaderIndex, "uModel");
         atSetUniform(UNIFORM_MAT4, shaderIndex, "uView");
         atSetUniform(UNIFORM_MAT4, shaderIndex, "uProj");
+        
+        // draw user-selected data
         atDrawCallSelect(
             DRAW_MESH,
             TRIANGLE_MODE,
@@ -61,5 +74,6 @@ void main() {
         
         atProcCamera();
         atProcRender();
+        atClockTick();
     ); atExit();
 }
