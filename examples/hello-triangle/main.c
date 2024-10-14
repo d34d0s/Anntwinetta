@@ -41,8 +41,10 @@ void main() {
     atMakeUniform(UNIFORM_MAT4, shaderIndex, "uProj", atGetCamProj());
 
     atMainLoop(
-        atDrawCall(DRAW_CLEAR, TRIANGLE_MODE);
+        atClockTick();
         atProcEvents();
+        
+        atDrawCall(DRAW_CLEAR, TRIANGLE_MODE);
         
         if (atIsKeyPressed(KEY_ESCAPE) || atIsKeyPressed(KEY_F12)) atExit();
 
@@ -74,6 +76,5 @@ void main() {
         
         atProcCamera();
         atProcRender();
-        atClockTick();
     ); atExit();
 }

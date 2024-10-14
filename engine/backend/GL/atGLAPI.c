@@ -7,16 +7,6 @@ ATGLcontext* atglCreateContext(GLFWwindow* w) {
         atLogError("failed to create OpenGL context");
         return atTypeCastPtr(ATGLcontext, ERR_INIT);
     }; ctx->init = 1;
-    
-    glfwMakeContextCurrent(w);
-    
-    glfwWindowHint(GLFW_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    
-    // enable double buffering with a 24bit Z buffer
-    glfwSetWindowAttrib(w, GLFW_DOUBLEBUFFER, 1);
-    glfwSetWindowAttrib(w, GLFW_DEPTH_BITS, 24);
 
     #ifdef _ATWIN_WINDOWS_
         if (glewInit() != ERR_NONE) {

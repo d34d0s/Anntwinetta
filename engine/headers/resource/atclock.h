@@ -5,14 +5,10 @@
 #include "../athelpers.h"
 
 typedef struct ATclock {
-    float FPS;              // Current frames per second
-    float TPF;              // Time per frame in milliseconds
-    int maxFPS;             // Target maximum frames per second
-    int last;               // Last update time in milliseconds
-    int current;            // Current time in milliseconds
-    float delta;            // Time since last frame in seconds
-    float frames;           // Frames since last update
+    float last;               // Last update time in milliseconds
+    float current;            // Current time in milliseconds
+    float delta;            // Time since last frame in milliseconds
 } ATclock;
 
-ATclock _atMakeClock(float maxFPS);
+ATclock _atMakeClock(void);
 void _atClockTick(ATclock* clock);

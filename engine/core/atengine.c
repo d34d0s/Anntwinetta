@@ -19,7 +19,7 @@ ATerrorType _atInitEngine(void) {
         return ERR_INIT;
     }
 
-    ENGINE.resource.clock = _atMakeClock(1000.0f);
+    ENGINE.resource.clock = _atMakeClock();
 
     ENGINE.resource.window = _atMakeWindow(800, 600, "~Anntwinetta~");
     

@@ -1,16 +1,12 @@
 #include "../../headers/resource/atclock.h"
 #include "../../vendor/GLFW/glfw3.h"
 
-ATclock _atMakeClock(float maxFPS) {
+ATclock _atMakeClock(void) {
     ATclock c = {
-        .FPS=0.0f,
-        .TPF=0.0f,
         .last=0.0f,
         .delta=0.0f,
-        .frames=0.0f,
-        .maxFPS = maxFPS,
         .current=glfwGetTime(),
-    }; return c;
+    };return c;
 }
 
 void _atClockTick(ATclock* clock) {
