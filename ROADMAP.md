@@ -2,12 +2,12 @@
 
 ### **Atwin Core**
 - **Atwin SDK (Refactor)**
-    - [ ] Engine SDK Update
-    - [ ] Engine Source Compilation
-    - [ ] User Project Compilation
-    - [ ] Engine Release Installation/Update
-    - [ ] Engine Repository Installation/Update
-    - [ ] External Mod Compilation
+    - [✔️] Engine SDK Update
+    - [✔️] Engine Source Compilation
+    - [✔️] User Project Compilation
+    - [✔️] Engine Release Installation/Update
+    - [✔️] Engine Repository Installation/Update
+    - [✔️] External Mod Compilation
     - [ ] External Mod Registry
 
 - **Core Processes**
