@@ -1,57 +1,42 @@
 # 🌸 **Anntwinetta Engine Roadmap** 🌸
 
-### **Core Engine Development**
-- **Platform Layer**
-  - [✔️] Windowing (GLFW)
-  - [✔️] Event+Input Process (GLFW)
-  - [✔️] Compile for Windows (Native OpenGL)
-  - [] Compile for Web (Emscripten + WebGL2)
+### **Atwin Core**
+- **Atwin SDK (Refactor)**
+    - [ ] Engine SDK Update
+    - [ ] Engine Source Compilation
+    - [ ] User Project Compilation
+    - [ ] Engine Release Installation/Update
+    - [ ] Engine Repository Installation/Update
+    - [ ] External Mod Compilation
+    - [ ] External Mod Registry
 
-- **Graphics API Implementations**
-  - [✔️] OpenGL API (Re)Implementation
-  - [ ] WebGL API Implementation
+- **Core Processes**
+    - [✔️] Event Processing
+    - [✔️] Input Processing
+    - [✔️] Render Data Processing
+    - [✔️] Camera Data Processing
+    - [ ] User Event Dispatch/Processing
+    - [ ] Shader Data Generation/Processing
 
-- **Entity Component System (ECS)**
-  - [ ] (Re)Implementation for optimized performance and scalability
+- **Core Resources**
+    - [✔️] Windowing
+    - [✔️] Engine Clock
+    - [✔️] Mesh Data
+    - [✔️] Shader Data
+    - [ ] Model Data
+    - [ ] Texture Data
+    - [ ] Material Data
 
----
+- **Core Utilities**
+    - [ ] OpenGL Logger
+    - [ ] Linked Array
+    - [ ] Dynamic Array
+    - [✔️] String Key Hashmap
+    - [✔️] Static Array Initializers
+    - [1/2] File R/W Operations
 
-### **Internal Data-Structures**
-- **Resource Storage**
-  - [✔️] Process Structure
-  - [1/2] Dynamic Arrays  (harder than i thought :P)
-  - [✔️] String Hashmap (linear probing, but good enough for now)
-
----
-
-### **Projects, Scripting and Modding**
-- **Anntwinetta SDK (LSDK)**
-  - [✔️] Build user projects
-  - [✔️] Build, Install, Update engine source
-
-- **Lily Module**
-  - [ ] Anntwinetta Python Bindings (pytwin)
-  - [ ] Python scripting system (lily-mod)
-
-- **Flowershop Module**
-  - [ ] Integration with Anntwinetta DB
-  - [ ] Store and Retrieve Mods for customization
-
----
-
-### **Testing and Examples**
-- **Anntwinetta Testing Modules**
-  - [ ] Internal modules for engine feature testing
-
-- **Anntwinetta Example Modules**
-  - [] Example mods/extensions to showcase engine capabilities
-
----
-
-### **Cloud Integration**
-- **Anntwinetta Cloud Integration**
-  - [ ] Cloud services for mod management and storage (cloud rendering???)
-
+- **Core Modules**
+    - [ ] LilyMod (external mod registry + API)
 ---
 
 ### **Documentation**
@@ -63,5 +48,11 @@
 
 - **Engine Design Document (EDD)**
   - [ ] Technical breakdown of engine architecture and functionality
+
+---
+
+### **Presence**
+  - [ ] Discord/Slack Community Setup
+  - [ ] Minimal intuitive SPA site-design ( Deployed on github pages )
 
 ---

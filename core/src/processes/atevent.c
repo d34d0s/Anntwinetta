@@ -8,6 +8,12 @@ void _atInitEventData(ATeventData* event) {
 }
 
 ATerrorType _atPrepEvent(void* d) {
+    ATeventData* event = atTypeCastPtr(ATeventData, d);
+    GLFWwindow* window = atTypeCastPtr(GLFWwindow, event->windowPtr);
+    if (glfwWindowShouldClose(window)) {
+        event->quit = 1;
+        return ERR_NONE;
+    }
     return ERR_NONE;
 }
 

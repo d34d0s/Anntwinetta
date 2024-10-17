@@ -2,8 +2,7 @@
 
 #include "../attypes.h"
 #include "../athelpers.h"
-#include "../../vendor/SDL2/SDL.h"
-#include "../../backend/headers/atGLAPI.h"
+#include "../backend/GL/atGLAPI.h"
 
 typedef struct ATwindow {
     char* title;

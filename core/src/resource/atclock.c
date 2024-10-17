@@ -1,5 +1,5 @@
 #include "../../headers/resource/atclock.h"
-#include "../../vendor/GLFW/glfw3.h"
+#include "../../../vendor/GLFW/glfw3.h"
 
 ATclock _atMakeClock(void) {
     ATclock c = {

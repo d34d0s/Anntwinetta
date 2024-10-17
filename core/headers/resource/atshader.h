@@ -4,7 +4,7 @@
 #include "../attypes.h"
 #include "../athelpers.h"
 
-#include "../../backend/headers/atGLAPI.h"
+#include "../backend/GL/atGLAPI.h"
 
 typedef struct ATuniformLayout {
     void* value;

@@ -1,2 +1,15 @@
+core/bin/
+core/lib/
+
 build/
+web_build/
+
+venv/
+dist/
+*.egg-info/
+__pycache__/
+
+*.bat
+edd.md
+_local/
 .vscode/

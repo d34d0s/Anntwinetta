@@ -3,7 +3,7 @@
 #include "../atmath.h"
 #include "../attypes.h"
 #include "../athelpers.h"
-#include "../../backend/headers/atGLAPI.h"
+#include "../backend/GL/atGLAPI.h"
 
 #define MAX_KEYS 1024
 #define MAX_MOUSE_BUTTONS 32

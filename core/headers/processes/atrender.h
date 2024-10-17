@@ -3,11 +3,9 @@
 #include "../attypes.h"
 #include "../athelpers.h"
 
-#include  "../../vendor/SDL2/SDL.h"
-
-#include "../../backend/headers/atGLAPI.h"
-
 #include "../resource/atwindow.h"
+#include "../backend/GL/atGLAPI.h"
+
 
 #define DRAW_CALL_MAX 1024
 

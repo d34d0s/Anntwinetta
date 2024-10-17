@@ -10,7 +10,7 @@
 #include <stdbool.h>
 
 #define SDL_MAIN_HANDLED
-#include "../vendor/SDL2/SDL.h"
+#include "../../vendor/SDL2/SDL.h"
 
 #ifdef ATWIN_SDL
     #define MAX_MOUSE_BUTTONS 5

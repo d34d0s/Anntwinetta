@@ -18,7 +18,7 @@
 #include "processes/atrender.h"
 #include "processes/atcamera.h"
 
-#include "../backend/headers/atGLAPI.h"
+#include "backend/GL/atGLAPI.h"
 
 typedef struct Anntwinetta {
     struct info {

@@ -1,17 +1,17 @@
 #pragma once
 
-#include "../../headers/atmath.h"
-#include "../../headers/attypes.h"
-#include "../../headers/athelpers.h"
+#include "../../atmath.h"
+#include "../../attypes.h"
+#include "../../athelpers.h"
 
 #ifdef _ATWIN_WEB_
-    #include "../../vendor/GLES3/gl32.h"
-    #include "../../vendor/SDL2/SDL_opengles.h"
+    #include "../../../../vendor/GLES3/gl32.h"
+    #include "../../../../vendor/SDL2/SDL_opengles.h"
 #else
-    #include "../../vendor/GL/glew.h"
+    #include "../../../../vendor/GL/glew.h"
 #endif
 
-#include "../../vendor/GLFW/glfw3.h"
+#include "../../../../vendor/GLFW/glfw3.h"
 
 typedef enum ATuniformType {
     UNIFORM_NONE=0,

@@ -15,8 +15,8 @@ ATwindow* _atMakeWindow(int x, int y, char* t) {
         return atTypeCastPtr(ATwindow, ERR_MALLOC);
     }; glfwMakeContextCurrent(w->_glfwWin);
     
-    glfwSetWindowAttrib(w->_glfwWin, GLFW_DOUBLEBUFFER, 1);
-    glfwSetWindowAttrib(w->_glfwWin, GLFW_DEPTH_BITS, 24);
+    // glfwSetWindowAttrib(w->_glfwWin, GLFW_DOUBLEBUFFER, 1);
+    // glfwSetWindowAttrib(w->_glfwWin, GLFW_DEPTH_BITS, 24);
 
     glViewport(0, 0, x, y);
     glfwSetFramebufferSizeCallback(w->_glfwWin, _atResizeCallback);
