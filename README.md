@@ -10,7 +10,7 @@
 
 [  [Official Wiki](https://github.com/F4R4W4Y/Anntwinetta/wiki) | [API Documentation](https://github.com/F4R4W4Y/Anntwinetta/wiki/Anntwinetta-API-Docs) | [Anntwinetta Examples](https://github.com/F4R4W4Y/Anntwinetta/tree/refactor_01/examples) ]
   
-[  [Official Reddit](https://www.reddit.com/r/Anntwinetta/) | [Anntwinetta Discussions](https://github.com/F4R4W4Y/Anntwinetta/discussions) | [Anntwinetta FAQ](https://github.com/F4R4W4Y/Anntwinetta/wiki/Anntwinetta-FAQ) ]
+[ [Official Discord](https://discord.gg/e43PDC45wu) | [Official Reddit](https://www.reddit.com/r/Anntwinetta/) | [Anntwinetta Discussions](https://github.com/F4R4W4Y/Anntwinetta/discussions) | [Anntwinetta FAQ](https://github.com/F4R4W4Y/Anntwinetta/wiki/Anntwinetta-FAQ) ]
 
 </br>
 </br>
