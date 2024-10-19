@@ -30,7 +30,7 @@
 - **Core Utilities**
     - [ ] OpenGL Logger
     - [ ] Linked Array
-    - [ ] Dynamic Array
+    - [✔️] Dynamic Array
     - [✔️] String Key Hashmap
     - [✔️] Static Array Initializers
     - [1/2] File R/W Operations

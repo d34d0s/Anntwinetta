@@ -46,11 +46,11 @@ ATerrorType atResizeArray(ATarray* inArr) {
     return err;
 }
 
-ATerrorType atInsertArray(int index, ATarray* inArr, void* inData) {
+ATerrorType atInsertArray(ATarray* inArr, int index, void* inData) {
     ATerrorType err = ERR_NONE;
     if (!inArr || index < 0) { return err; }
 
-    if (index > inArr->max || inArr->count+1 >= inArr->max) {
+    if (index > inArr->max || inArr->count == inArr->max) {
         atResizeArray(inArr);
     }
 
@@ -59,24 +59,19 @@ ATerrorType atInsertArray(int index, ATarray* inArr, void* inData) {
     return err;
 }
 
-void* atPopArray(int index, ATarray* inArr) {
+void* atPopArray(ATarray* inArr, int index) {
     ATerrorType err = ERR_NONE;
-    if (!inArr || index > inArr->max || index > inArr->count) { return atTypeCastPtr(void, err); }
-
-    void* value;
-    if (index < 0) {
-        value = inArr->arr[inArr->count-1];
-    } else {
-        value = inArr->arr[index];
-
-        int remaining = inArr->count-(index+1);
-
-        atForRangeI(remaining) {
-            inArr->arr[index+i] = inArr->arr[index+i+1];
-        }
-    }
     
-    inArr->arr[inArr->count-1] = NULL;
+    if (!inArr || index > inArr->count) {
+        return atTypeCastPtr(void, err);
+    }
+
+    void* value = inArr->arr[index];
+
+    for (int i = index; i < inArr->count-1; i++) {
+        inArr->arr[i] = inArr->arr[i + 1];
+    };inArr->arr[inArr->count-1] = NULL;
+    
     inArr->count--;
     return value;
 }

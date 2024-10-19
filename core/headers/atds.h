@@ -24,8 +24,8 @@ typedef struct AThashmap {
 ATWIN_API ATarray* atMakeArray(int max);
 ATWIN_API void atDestroyArray(ATarray* inArr);
 ATWIN_API ATerrorType atResizeArray(ATarray* inArr);
-ATWIN_API void* atPopArray(int index, ATarray* inArr);
-ATWIN_API ATerrorType atInsertArray(int index, ATarray* inArr, void* inData);
+ATWIN_API void* atPopArray(ATarray* inArr, int index);
+ATWIN_API ATerrorType atInsertArray(ATarray* inArr, int index, void* inData);
 
 
 // hashmap
