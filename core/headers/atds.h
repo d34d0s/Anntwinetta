@@ -3,9 +3,24 @@
 #include "attypes.h"
 #include "athelpers.h"
 
+typedef enum ATvalueType {
+    TYPE_NONE=0,
+    TYPE_INT,
+    TYPE_CHAR,
+    TYPE_FLOAT,
+    TYPE_STRING,
+    VALUE_TYPES
+} ATvalueType;
+
+typedef struct ATvalue {
+    void* value;
+    ATvalueType type;
+} ATvalue;
+
 typedef struct ATarray {
     int max;
     int count;
+    int resize;
     void** arr;
 } ATarray;
 
@@ -20,13 +35,26 @@ typedef struct AThashmap {
     ATkvPair** map;
 } AThashmap;
 
-//dynamic array
-ATWIN_API ATarray* atMakeArray(int max);
-ATWIN_API void atDestroyArray(ATarray* inArr);
-ATWIN_API ATerrorType atResizeArray(ATarray* inArr);
-ATWIN_API void* atPopArray(ATarray* inArr, int index);
-ATWIN_API ATerrorType atInsertArray(ATarray* inArr, int index, void* inData);
+// dynamic value
+ATWIN_API int atGetInt(ATvalue* v);
+ATWIN_API char* atGetString(ATvalue* v);
+ATWIN_API float atGetFloat(ATvalue* v);
+ATWIN_API void atDestroyValue(ATvalue* v);
+ATWIN_API ATvalue* atMakeInt(int value);
+ATWIN_API ATvalue* atMakeFloat(float value);
+ATWIN_API ATvalue* atMakeString(const char* value);
 
+// dynamic array
+ATWIN_API void atDestroyArray(ATarray* inArr);
+ATWIN_API ATarray* atMakeArray(int max, int resize);
+ATWIN_API ATerrorType atResizeArray(ATarray* inArr);
+ATWIN_API ATvalue* atPopArray(ATarray* inArr, int index);
+ATWIN_API int atQueryArrayInt(ATarray* inArr, int index);
+ATWIN_API ATvalue* atQueryArray(ATarray* inArr, int index);
+ATWIN_API float atQueryArrayFloat(ATarray* inArr, int index);
+ATWIN_API char* atQueryArrayString(ATarray* inArr, int index);
+ATWIN_API ATerrorType atInsertArray(ATarray* inArr, int index, ATvalue* value);
+ATWIN_API ATerrorType atInsertArrayV(ATarray* inArr, int count, ATvalue** values);
 
 // hashmap
 ATWIN_API void atDestroyHashmap(AThashmap* m);
