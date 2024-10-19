@@ -23,9 +23,9 @@
     - [✔️] Engine Clock
     - [✔️] Mesh Data
     - [✔️] Shader Data
-    - [ ] Model Data
+    - [✔️] Model Data
     - [ ] Texture Data
-    - [ ] Material Data
+    - [✔️] Material Data
 
 - **Core Utilities**
     - [ ] OpenGL Logger

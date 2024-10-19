@@ -11,8 +11,10 @@
 #include "resource/atwindow.h"
 
 #include "resource/atmesh.h"
+#include "resource/atmodel.h"
 #include "resource/atshader.h"
 #include "resource/attexture.h"
+#include "resource/atmaterial.h"
 
 #include "processes/atevent.h"
 #include "processes/atrender.h"
@@ -49,32 +51,13 @@ typedef struct Anntwinetta {
         ATGLcontext* context;
 
         ATmeshData mesh_data;
+        ATmodelData model_data;
         ATshaderData shader_data;
-
-        struct texture_data {
-            int count;
-            char** src;
-            char** title;
-            int* n_channels;
-            int** dimensions;
-        } texture_data;
-        
-        struct entity_data {
-            int count;
-            int* state;
-            int* components;
-        } entity_data;
+        ATtextureData texture_data;
+        ATmaterialData material_data;
     } resource;
 
     struct component_data {
-        struct model_data {
-            int count;
-        } model_data;
-
-        struct material_data {
-            int count;
-        } material_data;
-
         struct transform_data {
             int count;
         } transform_data;
@@ -96,8 +79,17 @@ ATerrorType _atInitEngine(void);
 ATerrorType _atExitEngine(void);
 
 // internal getters/setters
-ATclock* _atGetClock(void);
 Anntwinetta* _atGetEngine(void);
-ATmeshData* _atGetMeshData(void);
-ATshaderData* _atGetShaderData(void);
+
+ATclock* _atGetClock(void);
 float _atGetDeltaTime(void);
+
+ATeventData* _atGetEventData(void);
+ATrenderData* _atGetRenderData(void);
+
+ATmeshData* _atGetMeshData(void);
+ATmodelData* _atGetModelData(void);
+ATshaderData* _atGetShaderData(void);
+ATtextureData* _atGetTextureData(void);
+ATmaterialData* _atGetMaterialData(void);
+

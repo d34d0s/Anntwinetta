@@ -70,6 +70,8 @@ typedef enum ATerrorType {
     ERR_DRAW,
     ERR_MALLOC,
     ERR_SHADER,
+    ERR_MODEL,
+    ERR_MATERIAL,
     ERR_PROCESS,
     ERR_TYPES,
 } ATerrorType;

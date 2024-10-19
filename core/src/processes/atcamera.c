@@ -1,7 +1,58 @@
 #include "../../headers/resource/atwindow.h"
 #include "../../headers/processes/atcamera.h"
 
-// Internal Camera API
+void _atDestroyCameraData(ATcameraData* d) {
+    d->windowPtr = NULL;
+    d->camState.last_x = 0;
+    d->camState.last_y = 0;
+    d->camSettings.yaw = 0;
+    d->camSettings.pitch = 0;
+    d->camSettings.far = 0;
+    d->camSettings.near = 0;
+    d->camSettings.fov = 0;
+    d->camSettings.speed = 0;
+    d->camSettings.sensitivity = 0;
+    d->camSettings.globalup = atNewVec3(0, 0, 0);
+    d->camState.forward = atNewVec3(0, 0, 0);
+    d->camState.location = atNewVec3(0, 0, 0);
+    d->camState.proj = atIdentity();    
+    d->camState.view = atIdentity();
+    free(d);
+}
+
+ATerrorType _atInitCameraData(ATcameraData* d, ATwindow* w) {
+    d->windowPtr = w;
+    
+    d->camState.last_x = 0.0f;
+    d->camState.last_y = 0.0f;
+    
+    d->camSettings.yaw = -90.0f;
+    d->camSettings.pitch = 0.0f;
+    d->camSettings.far = 1000.0f;
+    d->camSettings.near = 0.1f;
+    d->camSettings.fov = atToRadians(45.0f);
+    d->camSettings.speed = 2.5f;
+    d->camSettings.sensitivity = 0.1f;
+    d->camSettings.globalup = atNewVec3(0, 1, 0);
+    
+    d->camState.forward = atNewVec3(0.0f, 0.0f, -1.0f);
+    d->camState.location = atNewVec3(0, 0, 3);
+    
+    d->camState.proj = atPerspective(
+        d->camSettings.fov,
+        w->dimensions[0] / w->dimensions[1],
+        d->camSettings.near, d->camSettings.far
+    );
+    
+    d->camState.view = atLookAt(
+        d->camState.location,
+        atAddVec3(d->camState.location, d->camState.forward),
+        d->camState.up
+    );
+
+    return ERR_NONE;    
+}
+
 void _atFreeLookCallback(GLFWwindow* win, double xpos, double ypos) {
     ATcameraData* cam = _atGetCameraData();
     

@@ -1,5 +1,34 @@
 #include "../../headers/resource/atmesh.h"
 
+void _atDestroyMeshData(ATmeshData* d) {
+    d->count = 0;
+    free(d->vbo);
+    free(d->vao);
+    free(d->n_verts);
+    free(d);
+}
+
+ATerrorType _atInitMeshData(ATmeshData* d, int max) {
+    d->count = 0;
+    
+    if (atInitIntArray(&d->vbo, max, "mesh data [vbo]")) {
+        atLogError("failed to allocate mesh data [vbo] array");
+        return ERR_MALLOC;
+    }
+
+    if (atInitIntArray(&d->vao, max, "mesh data [vao]")) {
+        atLogError("failed to allocate mesh data [vao] array");
+        return ERR_MALLOC;
+    }
+
+    if (atInitIntArray(&d->n_verts, max, "mesh data [n verts]")) {
+        atLogError("failed to allocate mesh data [n verts] array");
+        return ERR_MALLOC;
+    }
+
+    return ERR_NONE;
+}
+
 int _atSetMeshData(ATmeshData* d, int n_verts, float* vertices) {
     int index = d->count++;
     d->n_verts[index] = n_verts;    

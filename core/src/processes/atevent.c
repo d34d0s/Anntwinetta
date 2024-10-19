@@ -1,10 +1,44 @@
 #include "../../headers/processes/atevent.h"
 
-void _atInitEventData(ATeventData* event) {
-    memset(event->inputState.current_keys, 0, sizeof(event->inputState.current_keys));
-    memset(event->inputState.previous_keys, 0, sizeof(event->inputState.previous_keys));
-    memset(event->inputState.current_mouse_buttons, 0, sizeof(event->inputState.current_mouse_buttons));
-    memset(event->inputState.previous_mouse_buttons, 0, sizeof(event->inputState.previous_mouse_buttons));
+void _atDestroyEventData(ATeventData* d) {
+    d->quit = -1;
+    d->windowPtr = NULL;
+    free(d);
+}
+
+ATerrorType _atInitEventData(ATeventData* d, ATwindow* w) {
+    if (!d || !w) {
+        return ERR_TYPE;
+    }
+
+    d->quit = 0;
+    d->windowPtr = w->_glfwWin;
+
+    memset(d->inputState.current_keys, 0, sizeof(d->inputState.current_keys));
+    if (!d->inputState.current_keys) {
+        atLogError("failed to allocate current_keys input state");
+        return ERR_MALLOC;
+    }
+
+    memset(d->inputState.previous_keys, 0, sizeof(d->inputState.previous_keys));
+    if (!d->inputState.previous_keys) {
+        atLogError("failed to allocate previous_keys input state");
+        return ERR_MALLOC;
+    }
+
+    memset(d->inputState.current_mouse_buttons, 0, sizeof(d->inputState.current_mouse_buttons));
+    if (!d->inputState.current_mouse_buttons) {
+        atLogError("failed to allocate current_mouse_buttons input state");
+        return ERR_MALLOC;
+    }
+
+    memset(d->inputState.previous_mouse_buttons, 0, sizeof(d->inputState.previous_mouse_buttons));
+    if (!d->inputState.previous_mouse_buttons) {
+        atLogError("failed to allocate previous_mouse_buttons input state");
+        return ERR_MALLOC;
+    }
+
+    return ERR_NONE;
 }
 
 ATerrorType _atPrepEvent(void* d) {

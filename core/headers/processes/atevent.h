@@ -5,6 +5,8 @@
 #include "../athelpers.h"
 #include "../backend/GL/atGLAPI.h"
 
+#include "../../headers/resource/atwindow.h"
+
 #define MAX_KEYS 1024
 #define MAX_MOUSE_BUTTONS 32
 
@@ -18,8 +20,9 @@ typedef struct ATeventData {
         unsigned char previous_mouse_buttons[MAX_MOUSE_BUTTONS];
     } inputState;
 } ATeventData;
-ATeventData* _atGetEventData(void);
-void _atInitEventData(ATeventData* event);
+
+void _atDestroyEventData(ATeventData* d);
+ATerrorType _atInitEventData(ATeventData* event, ATwindow* w);
 
 ATerrorType _atPrepEvent(void* d);
 ATerrorType _atMainEvent(void* d);

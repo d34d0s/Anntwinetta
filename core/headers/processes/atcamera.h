@@ -42,6 +42,8 @@ typedef struct ATcameraData {
     } camSettings;
 } ATcameraData;
 ATcameraData* _atGetCameraData(void);
+void _atDestroyCameraData(ATcameraData* d);
+ATerrorType _atInitCameraData(ATcameraData* d, ATwindow* w);
 
 void _atFreeLookCallback(GLFWwindow* win, double xpos, double ypos);
 

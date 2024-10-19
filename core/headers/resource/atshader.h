@@ -29,9 +29,15 @@ typedef struct ATshaderData {
     AThashmap** uniforms;
 } ATshaderData;
 
+void _atDestroyShaderData(ATshaderData* d);
+ATerrorType _atInitShaderData(ATshaderData* d, int max);
+
 int _atSetShaderData(ATshaderData* d, const char* vertex, const char* fragment);
 ATshaderLayout* _atGetShaderLayout(ATshaderData* d, int index);
 void _atDestroyShaderLayout(ATshaderLayout* l);
 
-ATerrorType _atSetShaderUniform(ATshaderData* d, int index, ATuniformType type, const char* name, void* value);
-ATuniformLayout* _atGetShaderUniform(ATshaderData* d, int index, const char* name);
+ATerrorType _atMakeUniform(ATshaderData* d, int index, ATuniformType type, const char* name, void* value);
+ATerrorType _atSetUniform(ATshaderData* d, int index, ATuniformType type, const char* name, void* value);
+ATuniformLayout* _atGetUniformLayout(ATshaderData* d, int index, const char* name);
+void _atDestroyUniformLayout(ATuniformLayout* l);
+

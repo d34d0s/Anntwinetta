@@ -29,22 +29,26 @@ void main() {
          0.0,  0.5, 0.5,
     };
 
-    int meshIndex = atMakeMesh(3, vertices);
-    ATmeshLayout* meshLayout = atGetMeshLayout(meshIndex);
+    // make a model
+    int modelID = atMakeModel(3, vertices);
     
-    int shaderIndex = atMakeShader(vertexShader, fragShader);
-    ATshaderLayout* shaderLayout = atGetShaderLayout(shaderIndex);
+    // make a material
+    int materialID = atMakeMaterial(vertexShader, fragShader);
 
-    ATmat4 model = atIdentity();
-    atMakeUniform(UNIFORM_MAT4, shaderIndex, "uModel", &model);
-    atMakeUniform(UNIFORM_MAT4, shaderIndex, "uView", atGetCamView());
-    atMakeUniform(UNIFORM_MAT4, shaderIndex, "uProj", atGetCamProj());
+    // set the material to the model
+    atSetModelMaterial(modelID, materialID);
+
+    ATmat4 uModel = atIdentity();
+    atMakeMaterialUniform(materialID, UNIFORM_MAT4, "uModel", &uModel);
+    atMakeMaterialUniform(materialID, UNIFORM_MAT4, "uView", atGetCamView());
+    atMakeMaterialUniform(materialID, UNIFORM_MAT4, "uProj", atGetCamProj());
 
     atMainLoop(
         atClockTick();
         atProcEvents();
         
-        atDrawCall(DRAW_CLEAR, TRIANGLE_MODE);
+        // queue a clear call
+        atDrawCall(DRAW_CLEAR);
         
         if (atIsKeyPressed(KEY_ESCAPE) || atIsKeyPressed(KEY_F12)) atExit();
 
@@ -61,18 +65,13 @@ void main() {
         if (atIsKeyPressed(KEY_SPACE)) atCamUp();
         if (atIsKeyPressed(KEY_LEFT_SHIFT)) atCamDown();
 
-        // set shader uniforms before sending a draw call
-        atSetUniform(UNIFORM_MAT4, shaderIndex, "uModel");
-        atSetUniform(UNIFORM_MAT4, shaderIndex, "uView");
-        atSetUniform(UNIFORM_MAT4, shaderIndex, "uProj");
+        // send shader uniforms before issuing a draw call
+        atSendMaterialUniform(materialID, UNIFORM_MAT4, "uModel");
+        atSendMaterialUniform(materialID, UNIFORM_MAT4, "uView");
+        atSendMaterialUniform(materialID, UNIFORM_MAT4, "uProj");
         
-        // draw user-selected data
-        atDrawCallSelect(
-            DRAW_MESH,
-            TRIANGLE_MODE,
-            meshLayout,
-            shaderLayout
-        );
+        // queue a model draw
+        atDrawModel(modelID);
         
         atProcCamera();
         atProcRender();

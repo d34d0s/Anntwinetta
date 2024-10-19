@@ -95,6 +95,7 @@ int atglGetUniformLocation(int program, const char* name) {
 }
 
 void atglSetUniformValue(ATuniformType type, int program, int location, void* value) {
+    glUseProgram(program);
     switch (type) {
         case UNIFORM_NONE: break;
         case UNIFORM_VEC2: glUniform2fv(location, 1, value); break;

@@ -19,6 +19,9 @@ typedef struct ATmeshData {
     int* n_verts;
 } ATmeshData;
 
+void _atDestroyMeshData(ATmeshData* d);
+ATerrorType _atInitMeshData(ATmeshData* d, int max);
+
 int _atSetMeshData(ATmeshData* d, int n_verts, float* vertices);
 ATmeshLayout* _atGetMeshLayout(ATmeshData* d, int index);
 void _atDestroyMeshLayout(ATmeshLayout* l);

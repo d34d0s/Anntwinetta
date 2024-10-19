@@ -12,6 +12,7 @@
 typedef enum ATdrawCallType {
     DRAW_CLEAR          =0x0000,
     DRAW_MESH           =0x0001,
+    DRAW_MODEL          =0x0002,
     DRAW_TYPES
 } ATdrawCallType;
 
@@ -25,7 +26,6 @@ typedef enum ATdrawMode {
 typedef struct ATdrawCall {
     int vao;
     int type;
-    int glMode;
     int shader;
     int n_verts;
 } ATdrawCall;
@@ -38,10 +38,12 @@ typedef struct ATrenderData {
     float clearColor[4];
     ATdrawCall** drawCallArr;
 } ATrenderData;
-ATrenderData* _atGetRenderData(void);
+
+void _atDestroyRenderData(ATrenderData* d);
+ATerrorType _atInitRenderData(ATrenderData* d, ATwindow* w);
 
 void _atDestroyDrawCall(ATdrawCall* dc);
-ATdrawCall* _atMakeDrawCall(ATdrawCallType type, int glMode);
+ATdrawCall* _atMakeDrawCall(ATdrawCallType type);
 
 ATerrorType _atPrepRender(void*);
 ATerrorType _atMainRender(void*);
