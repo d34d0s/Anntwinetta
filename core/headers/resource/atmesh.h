@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../atds.h"
 #include "../attypes.h"
 #include "../athelpers.h"
 
@@ -7,16 +8,16 @@
 
 typedef struct ATmeshLayout {
     int idx;
-    int* vbo;
-    int* vao;
-    int* n_verts;
+    int vbo;
+    int vao;
+    int n_verts;
 } ATmeshLayout;
 
 typedef struct ATmeshData {
     int count;
-    int* vbo;
-    int* vao;
-    int* n_verts;
+    ATarray* vao;
+    ATarray* vbo;
+    ATarray* n_verts;
 } ATmeshData;
 
 void _atDestroyMeshData(ATmeshData* d);

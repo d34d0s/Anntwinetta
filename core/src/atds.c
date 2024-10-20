@@ -24,6 +24,17 @@ void atDestroyValue(ATvalue* v) {
     free(v);
 }
 
+ATvalue* atMakeValue(ATvalueType type, void* value) {
+    ATvalue* v = (ATvalue*)malloc(sizeof(ATvalue));
+    if (!v) {
+        atLogError("failed to allocate dynamic value");
+        return atTypeCastPtr(ATvalue, ERR_MALLOC);
+    }
+    v->type = type;
+    v->value = value;
+    return v;
+}
+
 ATvalue* atMakeInt(int value) {
     ATvalue* v = (ATvalue*)malloc(sizeof(ATvalue));
     if (!v) {
@@ -365,6 +376,7 @@ ATerrorType atRemHashmap(AThashmap* m, const char* key) {
         kvp = m->map[kHash];
     };
 
+    free(m->map[kHash]->v);
     free(m->map[kHash]);
     m->map[kHash] = NULL;
     return ERR_NONE;

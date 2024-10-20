@@ -66,14 +66,19 @@ void main() {
         if (atIsKeyPressed(KEY_LEFT_SHIFT)) atCamDown();
 
         // send shader uniforms before issuing a draw call
-        atSendMaterialUniform(materialID, UNIFORM_MAT4, "uModel");
         atSendMaterialUniform(materialID, UNIFORM_MAT4, "uView");
         atSendMaterialUniform(materialID, UNIFORM_MAT4, "uProj");
-        
+
         // queue a model draw
+        atSetMaterialUniform(materialID, UNIFORM_MAT4, "uModel", &uModel);
+        atSendMaterialUniform(materialID, UNIFORM_MAT4, "uModel");        
         atDrawModel(modelID);
-        
+
         atProcCamera();
+        
+        // TODO: re-factor render pipeline to be programmable
+        // drawModel() should queue a drawcall and the 
+        // render process main method should send uniforms before drawArrays/Elements
         atProcRender();
     ); atExit();
 }

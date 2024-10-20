@@ -14,19 +14,19 @@ typedef struct ATuniformLayout {
 
 typedef struct ATshaderLayout {
     int idx;
-    int* program;
-    const char** vSrc;
-    const char** fSrc;
-    AThashmap** uniforms;
+    int program;
+    const char* vSrc;
+    const char* fSrc;
+    AThashmap* uniforms;
 } ATshaderLayout;
 
 typedef struct ATshaderData {
     int count;
-    int* program;
-    int* n_uniforms;
-    const char** vSrc;
-    const char** fSrc;
-    AThashmap** uniforms;
+    ATarray* vSrc;
+    ATarray* fSrc;
+    ATarray* program;
+    ATarray* uniforms;
+    ATarray* n_uniforms;
 } ATshaderData;
 
 void _atDestroyShaderData(ATshaderData* d);

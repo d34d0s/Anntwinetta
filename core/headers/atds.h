@@ -9,6 +9,12 @@ typedef enum ATvalueType {
     TYPE_CHAR,
     TYPE_FLOAT,
     TYPE_STRING,
+    TYPE_HASHMAP,
+    TYPE_MESH,
+    TYPE_MODEL,
+    TYPE_SHADER,
+    TYPE_TEXTURE,
+    TYPE_MATERIAL,
     VALUE_TYPES
 } ATvalueType;
 
@@ -43,6 +49,7 @@ ATWIN_API void atDestroyValue(ATvalue* v);
 ATWIN_API ATvalue* atMakeInt(int value);
 ATWIN_API ATvalue* atMakeFloat(float value);
 ATWIN_API ATvalue* atMakeString(const char* value);
+ATWIN_API ATvalue* atMakeValue(ATvalueType type, void* value);
 
 // dynamic array
 ATWIN_API void atDestroyArray(ATarray* inArr);

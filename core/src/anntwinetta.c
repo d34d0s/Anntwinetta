@@ -44,7 +44,7 @@ void atDrawModel(int modelID) {
     atDrawSelect(
         DRAW_MODEL,
         atGetModelMeshLayout(modelID),
-        atGetShaderLayout(material_data->shader[model_data->material[modelID]])
+        atGetShaderLayout(atQueryArrayInt(material_data->shader, atQueryArrayInt(model_data->material, modelID)))
     );
 }
 
@@ -73,9 +73,9 @@ void atDrawSelect(ATdrawCallType type, ATmeshLayout* meshLayout, ATshaderLayout*
     }
 
     ATdrawCall* dc = _atMakeDrawCall(type);
-    dc->vao = *meshLayout->vao;
-    dc->shader = *shaderLayout->program;
-    dc->n_verts = *meshLayout->n_verts;
+    dc->vao = meshLayout->vao;
+    dc->shader = shaderLayout->program;
+    dc->n_verts = meshLayout->n_verts;
     if (!dc) {
         atLogError("failed to create draw call");
         return;
@@ -245,7 +245,7 @@ ATerrorType atSetUniform(ATuniformType type, int index, const char* name, void* 
 void atSendUniform(ATuniformType type, int index, const char* name) {
     ATshaderData* shader_data = _atGetShaderData();
     ATuniformLayout* uniform = atGetUniformLayout(index, name);
-    atglSetUniformValue(type, shader_data->program[index], uniform->location, uniform->value);
+    atglSetUniformValue(type, atQueryArrayInt(shader_data->program, index), uniform->location, uniform->value);
     _atDestroyUniformLayout(uniform);
 }
 
@@ -273,7 +273,7 @@ ATmodelLayout* atGetModelLayout(int index) {
 ATmeshLayout* atGetModelMeshLayout(int index) {
     ATmeshData* mesh_data = _atGetMeshData();
     ATmodelData* model_data = _atGetModelData();
-    return _atGetMeshLayout(mesh_data, model_data->mesh[index]);
+    return _atGetMeshLayout(mesh_data, atQueryArrayInt(model_data->mesh, index));
 }
 
 ATerrorType atSetModelMaterial(int modelID, int materialID) {
@@ -300,8 +300,9 @@ ATerrorType atRemModelMaterial(int modelID, int materialID) {
 
 ATmaterialLayout* atGetModelMaterialLayout(int index) {
     ATmodelData* model_data = _atGetModelData();
+    ATshaderData* shader_data = _atGetShaderData();
     ATmaterialData* material_data = _atGetMaterialData();
-    return _atGetMaterialLayout(material_data, model_data->material[index]);
+    return _atGetMaterialLayout(material_data, shader_data, atQueryArrayInt(model_data->material, index));
 }
 
 // material
@@ -316,35 +317,36 @@ void atDestroyMateralLayout(ATmaterialLayout* layout) {
 }
 
 ATmaterialLayout* atGetMaterialLayout(int index) {
+    ATshaderData* shader_data = _atGetShaderData();
     ATmaterialData* materialData = _atGetMaterialData();
-    return _atGetMaterialLayout(materialData, index);
+    return _atGetMaterialLayout(materialData, shader_data, index);
 }
 
 
 ATshaderLayout* atGetMaterialShaderLayout(int index) {
     ATshaderData* shaderData = _atGetShaderData();
     ATmaterialData* materialData = _atGetMaterialData();
-    return _atGetShaderLayout(shaderData, materialData->shader[index]);
+    return _atGetShaderLayout(shaderData, atQueryArrayInt(materialData->shader, index));
 }
 
 ATuniformLayout* atGetMaterialUniformLayout(int index, const char* name) {
     ATshaderData* shaderData = _atGetShaderData();
     ATmaterialData* materialData = _atGetMaterialData();
-    return _atGetUniformLayout(shaderData, materialData->shader[index], name);
+    return _atGetUniformLayout(shaderData, atQueryArrayInt(materialData->shader, index), name);
 }
 
 ATerrorType atMakeMaterialUniform(int index, ATuniformType type, const char* name, void* value) {
     ATmaterialData* materialData = _atGetMaterialData();
-    return atMakeUniform(type, materialData->shader[index], name, value);
+    return atMakeUniform(type, atQueryArrayInt(materialData->shader, index), name, value);
 }
 
 ATerrorType atSetMaterialUniform(int index, ATuniformType type, const char* name, void* value) {
     ATmaterialData* materialData = _atGetMaterialData();
-    return atSetUniform(type, materialData->shader[index], name, value);
+    return atSetUniform(type, atQueryArrayInt(materialData->shader, index), name, value);
 }
 
 void atSendMaterialUniform(int index, ATuniformType type, const char* name) {
     ATmaterialData* materialData = _atGetMaterialData();
-    atSendUniform(type, materialData->shader[index], name);
+    atSendUniform(type, atQueryArrayInt(materialData->shader, index), name);
 }
 
